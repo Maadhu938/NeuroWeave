@@ -42,7 +42,7 @@ app = FastAPI(
     description="AI-powered adaptive learning backend",
     version="1.0.0",
     lifespan=lifespan,
-    docs_url=None if settings.host != "0.0.0.0" else "/docs",  # disable docs in prod
+    docs_url=None if settings.environment == "production" else "/docs",
     redoc_url=None,
 )
 

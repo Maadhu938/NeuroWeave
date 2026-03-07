@@ -1,5 +1,6 @@
 """Firebase auth middleware — verifies ID tokens from the frontend."""
 
+import json
 import logging
 
 from fastapi import HTTPException, Request
@@ -37,7 +38,11 @@ def _init_firebase():
 
     sa = settings.firebase_service_account.strip()
     if sa and not sa.startswith("#"):
-        cred = credentials.Certificate(sa)
+        # Support both file path and inline JSON content
+        if sa.startswith("{"):
+            cred = credentials.Certificate(json.loads(sa))
+        else:
+            cred = credentials.Certificate(sa)
     else:
         cred = _DevCredential()
 

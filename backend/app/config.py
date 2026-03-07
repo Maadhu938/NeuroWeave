@@ -10,8 +10,9 @@ class Settings(BaseSettings):
     embedding_model: str = "all-MiniLM-L6-v2"
     host: str = "0.0.0.0"
     port: int = 8000
+    environment: str = "development"  # "production" on Render
     firebase_project_id: str = ""
-    firebase_service_account: str = ""  # path to service account JSON (optional)
+    firebase_service_account: str = ""  # file path OR raw JSON string
 
     @property
     def origins(self) -> List[str]:
