@@ -4,8 +4,48 @@
 
 * {
   font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
   overflow-x: hidden;
+  overscroll-behavior: none;
+}
+
+/* GPU-accelerated smooth scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(79, 140, 255, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(79, 140, 255, 0.35);
+}
+
+/* Smooth transitions on all interactive elements */
+button, a, input, textarea, select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent layout shifts from scrollbar appearance */
+@supports (scrollbar-gutter: stable) {
+  .overflow-y-auto,
+  .overflow-y-scroll {
+    scrollbar-gutter: stable;
+  }
 }
