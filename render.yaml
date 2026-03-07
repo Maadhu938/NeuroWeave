@@ -20,3 +20,5 @@ services:
         sync: false
       - key: FIREBASE_SERVICE_ACCOUNT
         sync: false
+      - key: EMBEDDING_MODEL
+        value: all-MiniLM-L6-v2
