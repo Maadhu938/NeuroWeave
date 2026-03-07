@@ -1,5 +1,6 @@
 """Firebase auth middleware — verifies ID tokens from the frontend."""
 
+import base64
 import json
 import logging
 
@@ -38,11 +39,15 @@ def _init_firebase():
 
     sa = settings.firebase_service_account.strip()
     if sa and not sa.startswith("#"):
-        # Support both file path and inline JSON content
+        # Support file path, inline JSON, or base64-encoded JSON
         if sa.startswith("{"):
             cred = credentials.Certificate(json.loads(sa))
-        else:
+        elif sa.startswith("/") or sa.endswith(".json"):
             cred = credentials.Certificate(sa)
+        else:
+            # Treat as base64-encoded JSON (safe for env vars — no quotes/commas)
+            decoded = base64.b64decode(sa).decode("utf-8")
+            cred = credentials.Certificate(json.loads(decoded))
     else:
         cred = _DevCredential()
 
