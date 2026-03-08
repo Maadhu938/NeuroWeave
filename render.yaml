@@ -12,7 +12,7 @@ services:
       - key: GROQ_API_KEY
         sync: false
       - key: CORS_ORIGINS
-        value: '["https://neuroweave.in"]'
+        value: '["https://neuroweave.in","https://www.neuroweave.in"]'
       - key: ENVIRONMENT
         value: production
       - key: FIREBASE_PROJECT_ID
