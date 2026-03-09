@@ -22,4 +22,4 @@ RUN chown -R appuser:appuser /app
 USER appuser
 
 EXPOSE 8000
-CMD ["sh", "-c", "python -c \"import socket; print('Testing TCP to Supabase...'); s=socket.create_connection(('aws-1-ap-south-1.pooler.supabase.com', 6543), timeout=10); print('TCP OK!'); s.close()\" && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["sh", "-c", "python -c \"import os, socket, urllib.parse; u=urllib.parse.urlparse(os.getenv('DATABASE_URL')); h=u.hostname; p=u.port or 5432; print(f'Testing TCP to {h}:{p}...'); s=socket.create_connection((h, p), timeout=10); print('TCP OK!'); s.close()\" && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
