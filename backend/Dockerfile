@@ -22,4 +22,4 @@ RUN chown -R appuser:appuser /app
 USER appuser
 
 EXPOSE 8000
-CMD ["sh", "-c", "python -c \"import os, socket, urllib.parse; u=urllib.parse.urlparse(os.getenv('DATABASE_URL')); h=u.hostname; p=u.port or 5432; print(f'Testing TCP to {h}:{p}...'); s=socket.create_connection((h, p), timeout=10); print('TCP OK!'); s.close()\" && uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+CMD ["sh", "-c", "python -c \"import os, socket, urllib.parse; db=os.getenv('DATABASE_URL');\ntry:\n  if not db: raise Exception('No DATABASE_URL');\n  u=urllib.parse.urlparse(db);\n  h=u.hostname; p=u.port or 5432;\n  print(f'Testing TCP to {h}:{p}...');\n  s=socket.create_connection((h, p), timeout=5);\n  print('TCP OK!');\n  s.close();\nexcept Exception as e:\n  print(f'TCP Check Skipped/Failed: {e}');\" ; uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]

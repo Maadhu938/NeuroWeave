@@ -26,6 +26,7 @@ export function BrainMap({ onNavigate }: BrainMapProps) {
   const animationFrameRef = useRef<number>();
   const pulseRef = useRef(0);
   const lastMousePosRef = useRef({ x: 0, y: 0 });
+  const lastTouchPosRef = useRef({ x: 0, y: 0 });
   const [nodes, setNodes] = useState<GraphNode[]>([]);
   const [loading, setLoading] = useState(true);
   const nodesRef = useRef<GraphNode[]>([]);
@@ -271,6 +272,65 @@ export function BrainMap({ onNavigate }: BrainMapProps) {
     setZoom(prevZoom => Math.min(Math.max(prevZoom + delta, 0.5), 3));
   };
 
+  const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (e.touches.length === 1) {
+      setIsDragging(true);
+      const touch = e.touches[0];
+      lastTouchPosRef.current = { x: touch.clientX, y: touch.clientY };
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    if (isDragging && e.touches.length === 1) {
+      const touch = e.touches[0];
+      const dx = touch.clientX - lastTouchPosRef.current.x;
+      const dy = touch.clientY - lastTouchPosRef.current.y;
+
+      setPan(prevPan => ({ x: prevPan.x + dx, y: prevPan.y + dy }));
+      lastTouchPosRef.current = { x: touch.clientX, y: touch.clientY };
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    setIsDragging(false);
+    
+    // Handle click/selection on touch end if not dragging much
+    if (e.changedTouches.length === 1) {
+      const touch = e.changedTouches[0];
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const centerX = canvas.offsetWidth / 2;
+      const centerY = canvas.offsetHeight / 2;
+      const offsetX = pan.x + (centerX - 400) * zoom;
+      const offsetY = pan.y + (centerY - 300) * zoom;
+      
+      const x = (touch.clientX - rect.left - offsetX) / zoom;
+      const y = (touch.clientY - rect.top - offsetY) / zoom;
+
+      // Check if click is on a node
+      const clickedNode = nodes.find(node => {
+        const distance = Math.sqrt(Math.pow(x - node.x, 2) + Math.pow(y - node.y, 2));
+        return distance < 35; // Slightly larger hit area for touch
+      });
+
+      if (clickedNode) {
+        const status = clickedNode.strength >= 85 ? 'Strong — no review needed soon'
+          : clickedNode.strength >= 70 ? 'Moderate — review recommended this week'
+          : clickedNode.strength >= 50 ? 'Weakening — review within 1-2 days'
+          : 'Critical — immediate review needed';
+        setSelectedNode({
+          label: clickedNode.label,
+          strength: clickedNode.strength,
+          category: clickedNode.category,
+          status,
+          relatedConcepts: clickedNode.connections.map(id => nodes.find(n => n.id === id)?.label || ''),
+        });
+      }
+    }
+  };
+
   return (
     <div className="space-y-4 md:space-y-6">
       {/* Header */}
@@ -355,6 +415,9 @@ export function BrainMap({ onNavigate }: BrainMapProps) {
               onMouseUp={handleCanvasMouseUp}
               onMouseLeave={handleCanvasMouseLeave}
               onWheel={handleWheel}
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
               className={`w-full h-full ${isDragging ? 'cursor-grabbing' : hoveredNode ? 'cursor-pointer' : 'cursor-grab'}`}
               style={{ touchAction: 'none' }}
             />
