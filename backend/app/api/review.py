@@ -73,7 +73,7 @@ async def submit_review(
     # Weighted running average for quiz score
     old_score = node.quiz_score or 0.0
     node.quiz_score = round(old_score * 0.7 + body.score * 0.3, 3)
-    node.last_reviewed = datetime.now(timezone.utc)
+    node.last_reviewed = datetime.utcnow()
 
     # Log the review
     log = ReviewLog(

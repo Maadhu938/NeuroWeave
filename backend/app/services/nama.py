@@ -84,9 +84,11 @@ def _time_decay(last_reviewed: datetime | None) -> float:
     """Logarithmic decay penalty based on days since last review."""
     if last_reviewed is None:
         return W4_DECAY * 0.5  # moderate penalty for never-reviewed
-    now = datetime.now(timezone.utc)
-    if last_reviewed.tzinfo is None:
-        last_reviewed = last_reviewed.replace(tzinfo=timezone.utc)
+    now = datetime.utcnow()
+    # last_reviewed from DB is naive. Ensure both are naive.
+    if last_reviewed.tzinfo is not None:
+        last_reviewed = last_reviewed.replace(tzinfo=None)
+    
     days = (now - last_reviewed).total_seconds() / 86400
     return W4_DECAY * _clamp(math.log(days + 1) / 5.0)
 

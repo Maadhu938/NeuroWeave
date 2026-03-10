@@ -21,7 +21,7 @@ async def get_study_plan_data(db: AsyncSession, user_id: str) -> Dict:
         return _empty_plan()
 
     # ── Real review data ────────────────────────────────────
-    now = datetime.now(timezone.utc)
+    now = datetime.utcnow()
     week_start = now - timedelta(days=now.weekday())  # Monday 00:00
     week_start = week_start.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
 

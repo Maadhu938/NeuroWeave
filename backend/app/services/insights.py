@@ -195,7 +195,7 @@ def _review_timing(last_reviewed: datetime | None) -> str:
     """Human-readable time until next review based on spaced repetition."""
     if last_reviewed is None:
         return "Now"
-    now = datetime.now(timezone.utc)
+    now = datetime.utcnow()
     if last_reviewed.tzinfo is None:
         last_reviewed = last_reviewed.replace(tzinfo=timezone.utc)
     days_since = (now - last_reviewed).total_seconds() / 86400
@@ -256,7 +256,7 @@ async def _compute_streak(db: AsyncSession, user_id: str) -> int:
     if not review_dates:
         return 0
 
-    today = datetime.now(timezone.utc).date()
+    today = datetime.utcnow().date()
     # Allow starting from today or yesterday
     streak = 0
     expected = today
