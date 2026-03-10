@@ -86,5 +86,6 @@ app.include_router(settings_api.router)
 
 
 @app.get("/health")
+@app.head("/health")
 async def health():
     return {"status": "ok"}

@@ -2,30 +2,49 @@ import { auth } from '@/lib/firebase';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.neuroweave.in';
 
+const promiseCache = new Map<string, Promise<any>>();
+
 async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint}`;
+  const isReadRequest = !options || !options.method || options.method === 'GET';
+  const cacheKey = `${endpoint}:${JSON.stringify(options?.body || '')}`;
 
-  // Get Firebase ID token for authenticated requests
-  const token = await auth.currentUser?.getIdToken();
-
-  const { headers: optHeaders, ...restOptions } = options || {};
-  const isFormData = restOptions.body instanceof FormData;
-
-  const response = await fetch(url, {
-    ...restOptions,
-    headers: {
-      // Don't set Content-Type for FormData — browser auto-sets with boundary
-      ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...(optHeaders as Record<string, string> || {}),
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`API error: ${response.status} ${response.statusText}`);
+  // Deduplicate inflight GET requests
+  if (isReadRequest && promiseCache.has(cacheKey)) {
+    return promiseCache.get(cacheKey);
   }
 
-  return response.json();
+  const fetchPromise = (async () => {
+    try {
+      const url = `${API_BASE_URL}${endpoint}`;
+      const token = await auth.currentUser?.getIdToken();
+      const { headers: optHeaders, ...restOptions } = options || {};
+      const isFormData = restOptions.body instanceof FormData;
+
+      const response = await fetch(url, {
+        ...restOptions,
+        headers: {
+          ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          ...(optHeaders as Record<string, string> || {}),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status} ${response.statusText}`);
+      }
+
+      return await response.json();
+    } finally {
+      // Clear from cache once finished (whether success or error)
+      if (isReadRequest) promiseCache.delete(cacheKey);
+    }
+  })();
+
+  if (isReadRequest) {
+    promiseCache.set(cacheKey, fetchPromise);
+  }
+
+  return fetchPromise;
 }
 
 // ── Dashboard ──────────────────────────────────────────────

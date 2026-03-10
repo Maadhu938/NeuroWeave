@@ -8,7 +8,12 @@ from groq import AsyncGroq
 
 from app.config import settings
 
+import time
+import hashlib
+
 _client: AsyncGroq | None = None
+_insights_cache = {}  # { hash: (timestamp, data) }
+INSIGHT_CACHE_TTL = 300  # 5 minutes
 
 
 def _get_client() -> AsyncGroq:
@@ -89,9 +94,17 @@ async def ask_brain_llm(question: str, context_chunks: List[str], related_concep
 
 
 async def generate_insights_llm(node_summaries: str) -> List[dict]:
-    """Generate AI-powered learning insights."""
+    """Generate AI-powered learning insights with simple TTL caching."""
     if not settings.groq_api_key:
         return [{"title": "Configure API Key", "description": "Add GROQ_API_KEY to enable AI insights.", "type": "info"}]
+
+    summary_hash = hashlib.md5(node_summaries.encode()).hexdigest()
+    now = time.time()
+    
+    if summary_hash in _insights_cache:
+        ts, data = _insights_cache[summary_hash]
+        if now - ts < INSIGHT_CACHE_TTL:
+            return data
 
     prompt = (
         "Based on this summary of a student's knowledge graph, generate 3-5 actionable learning insights. "
@@ -113,7 +126,9 @@ async def generate_insights_llm(node_summaries: str) -> List[dict]:
         raw = resp.choices[0].message.content.strip()
         match = re.search(r'\[.*\]', raw, re.DOTALL)
         if match:
-            return json.loads(match.group())
+            results = json.loads(match.group())
+            _insights_cache[summary_hash] = (now, results)
+            return results
     except Exception:
         pass
     return [{"title": "Keep Learning", "description": "Upload more knowledge to get personalised insights.", "type": "info"}]

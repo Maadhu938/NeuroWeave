@@ -30,21 +30,35 @@ async def upload_file(file: UploadFile = File(...), user: dict = Depends(get_cur
     # Read and validate size
     content = await file.read()
     if len(content) > MAX_FILE_SIZE:
+        await file.close()
         raise HTTPException(400, "File too large. Max 20 MB.")
 
-    # Extract text
-    if ext == ".pdf":
-        text = extract_text_from_pdf(content)
-    elif ext in (".doc", ".docx"):
-        text = extract_text_from_docx(content)
-    else:
-        text = content.decode("utf-8", errors="replace")
+    try:
+        # Extract text
+        if ext == ".pdf":
+            text = extract_text_from_pdf(content)
+        elif ext in (".doc", ".docx"):
+            text = extract_text_from_docx(content)
+        else:
+            text = content.decode("utf-8", errors="replace")
 
-    if not text.strip():
-        raise HTTPException(400, "Could not extract text from file.")
+        # Explicitly free binary content early
+        import gc
+        del content
+        gc.collect()
 
-    concepts, relationships = await ingest_text(db, text, filename=filename, user_id=user["uid"])
-    return {"concepts": concepts, "relationshipsFound": relationships}
+        if not text.strip():
+            raise HTTPException(400, "Could not extract text from file.")
+
+        concepts, relationships = await ingest_text(db, text, filename=filename, user_id=user["uid"])
+        
+        # Explicitly free text content
+        del text
+        gc.collect()
+        
+        return {"concepts": concepts, "relationshipsFound": relationships}
+    finally:
+        await file.close()
 
 
 @router.post("/api/upload/text")

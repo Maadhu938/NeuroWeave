@@ -21,6 +21,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const [upcomingReviews, setUpcomingReviews] = useState<UpcomingReview[]>([]);
   const [metrics, setMetrics] = useState({ knowledgeScore: '--', retentionRate: '--', conceptsMastered: '--', studyStreak: '--' });
   const [aiInsight, setAiInsight] = useState('');
+  const [showHeavyComponents, setShowHeavyComponents] = useState({ ai: false, heatmap: false, decay: false });
 
   useEffect(() => {
     getDashboard()
@@ -37,7 +38,18 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         });
         setAiInsight(data.aiInsight);
       })
-      .catch(() => { /* API not available yet – UI renders empty state */ });
+      .catch(() => { /* API not available yet */ });
+
+    // Stagger heavy API calls to prevent Render OOM
+    const t1 = setTimeout(() => setShowHeavyComponents(prev => ({ ...prev, ai: true })), 1000);
+    const t2 = setTimeout(() => setShowHeavyComponents(prev => ({ ...prev, heatmap: true })), 2500);
+    const t3 = setTimeout(() => setShowHeavyComponents(prev => ({ ...prev, decay: true })), 4000);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
   }, []);
 
   return (
@@ -273,24 +285,28 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       </motion.div>
 
       {/* AI-Generated Insight Cards */}
-      <motion.div
-        ref={aiSectionRef}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.45 }}
-      >
-        <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-[#FFB800]" />
-          AI Intelligence Insights
-        </h2>
-        <AIInsightCards />
-      </motion.div>
+      {showHeavyComponents.ai && (
+        <motion.div
+          ref={aiSectionRef}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-[#FFB800]" />
+            AI Intelligence Insights
+          </h2>
+          <AIInsightCards />
+        </motion.div>
+      )}
 
-      {/* Memory Strength Heatmap - NAMA Algorithm Visualization */}
-      <MemoryHeatmap />
+      {/* Memory Strength Heatmap */}
+      {showHeavyComponents.heatmap && <MemoryHeatmap />}
 
       {/* Memory Decay Prediction */}
-      <MemoryDecayChart concept={weakAreas.length > 0 ? weakAreas[0].topic : undefined} />
+      {showHeavyComponents.decay && (
+        <MemoryDecayChart concept={weakAreas.length > 0 ? weakAreas[0].topic : undefined} />
+      )}
     </div>
   );
 }
