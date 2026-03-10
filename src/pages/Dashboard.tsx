@@ -40,10 +40,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       })
       .catch(() => { /* API not available yet */ });
 
-    // Stagger heavy API calls to prevent Render OOM
-    const t1 = setTimeout(() => setShowHeavyComponents(prev => ({ ...prev, ai: true })), 1000);
-    const t2 = setTimeout(() => setShowHeavyComponents(prev => ({ ...prev, heatmap: true })), 2500);
-    const t3 = setTimeout(() => setShowHeavyComponents(prev => ({ ...prev, decay: true })), 4000);
+    // Faster staggered loading
+    const t1 = setTimeout(() => setShowHeavyComponents(prev => ({ ...prev, ai: true })), 400);
+    const t2 = setTimeout(() => setShowHeavyComponents(prev => ({ ...prev, heatmap: true })), 1000);
+    const t3 = setTimeout(() => setShowHeavyComponents(prev => ({ ...prev, decay: true })), 1600);
 
     return () => {
       clearTimeout(t1);

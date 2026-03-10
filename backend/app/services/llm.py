@@ -13,7 +13,7 @@ import hashlib
 
 _client: AsyncGroq | None = None
 _insights_cache = {}  # { hash: (timestamp, data) }
-INSIGHT_CACHE_TTL = 300  # 5 minutes
+INSIGHT_CACHE_TTL = 60  # 1 minute
 
 
 def _get_client() -> AsyncGroq:
