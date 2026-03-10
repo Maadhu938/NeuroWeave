@@ -60,9 +60,13 @@ async def ingest_text(
     # 3. Build a small description for each concept from the source text
     concept_snippets = _match_concepts_to_chunks(concept_labels, chunks)
 
-    # 4. Embed concept snippets
+    # 4. Embed concept snippets in small batches to reduce memory spikes
     all_texts = [f"{label}: {snippet}" for label, snippet in concept_snippets]
-    embeddings = embed_texts(all_texts)
+    embeddings = []
+    batch_size = 4
+    for i in range(0, len(all_texts), batch_size):
+        batch = all_texts[i : i + batch_size]
+        embeddings.extend(embed_texts(batch))
 
     # 5. Upsert nodes
     created_nodes: List[KnowledgeNode] = []

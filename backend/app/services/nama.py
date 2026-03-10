@@ -68,13 +68,21 @@ async def _graph_reinforcement(db: AsyncSession, node: KnowledgeNode) -> float:
     if not neighbour_ids:
         return 0.0
 
+    # Fetch all neighbour strengths in a single query to avoid N+1 patterns.
     total = 0.0
+    neighbour_id_list = [nid for nid, _ in neighbour_ids]
+    neighbours = (
+        await db.execute(
+            select(KnowledgeNode.id, KnowledgeNode.strength).where(
+                KnowledgeNode.id.in_(neighbour_id_list)
+            )
+        )
+    ).all()
+    strength_map = {row[0]: (row[1] or 0.0) for row in neighbours}
+
     for nid, weight in neighbour_ids:
-        neighbour = (await db.execute(
-            select(KnowledgeNode).where(KnowledgeNode.id == nid)
-        )).scalar_one_or_none()
-        if neighbour:
-            total += (neighbour.strength or 0.0) * weight
+        strength = strength_map.get(nid, 0.0)
+        total += strength * weight
 
     # Normalise so the maximum contribution equals W3_GRAPH
     return W3_GRAPH * _clamp(total / max(len(neighbour_ids), 1))

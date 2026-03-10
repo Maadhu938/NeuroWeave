@@ -6,7 +6,7 @@ const promiseCache = new Map<string, Promise<any>>();
 
 async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const isReadRequest = !options || !options.method || options.method === 'GET';
-  const cacheKey = `${endpoint}:${JSON.stringify(options?.body || '')}`;
+  const cacheKey = `${endpoint}:${options?.method || 'GET'}:${JSON.stringify(options?.body || '')}`;
 
   // Deduplicate inflight GET requests
   if (isReadRequest && promiseCache.has(cacheKey)) {
@@ -30,7 +30,17 @@ async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
       });
 
       if (!response.ok) {
-        throw new Error(`API error: ${response.status} ${response.statusText}`);
+        let message = `API error: ${response.status} ${response.statusText}`;
+        try {
+          const data = await response.json();
+          const detail = (data as any)?.detail || (data as any)?.message;
+          if (typeof detail === 'string' && detail.trim().length > 0) {
+            message = detail;
+          }
+        } catch {
+          // Ignore JSON parse failures and fall back to generic message
+        }
+        throw new Error(message);
       }
 
       return await response.json();

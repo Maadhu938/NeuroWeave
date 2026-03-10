@@ -4,9 +4,14 @@ from functools import lru_cache
 from typing import List
 
 import numpy as np
+import torch
 from sentence_transformers import SentenceTransformer
 
 from app.config import settings
+
+
+# Limit threading to keep memory/CPU under control on small instances.
+torch.set_num_threads(1)
 
 
 @lru_cache(maxsize=1)
@@ -17,7 +22,12 @@ def _get_model() -> SentenceTransformer:
 def embed_texts(texts: List[str]) -> List[List[float]]:
     """Return L2-normalised embeddings for a list of texts."""
     model = _get_model()
-    vectors = model.encode(texts, normalize_embeddings=True, show_progress_bar=False)
+    vectors = model.encode(
+        texts,
+        normalize_embeddings=True,
+        show_progress_bar=False,
+        batch_size=8,
+    )
     return vectors.tolist()
 
 
