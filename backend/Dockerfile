@@ -1,5 +1,11 @@
 FROM python:3.12-slim
 
+# Global CPU/thread limits to stay within 512MB Render dyno
+ENV OMP_NUM_THREADS=1 \
+    MKL_NUM_THREADS=1 \
+    NUMEXPR_NUM_THREADS=1 \
+    TOKENIZERS_PARALLELISM=false
+
 # Create non-root user
 RUN groupadd -r appuser && useradd -r -g appuser -d /app -s /sbin/nologin appuser
 
@@ -15,7 +21,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Pre-download embedding model during build
+# Pre-download embedding model during build so runtime doesn't spike memory on first request
 RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
 
 RUN chown -R appuser:appuser /app

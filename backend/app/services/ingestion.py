@@ -48,19 +48,23 @@ async def ingest_text(
     """Full ingestion pipeline: chunk → extract concepts → embed → store nodes + edges.
     Returns (concept_labels, relationship_count).
     """
-    # 1. Chunk input
+    # 1. Hard cap text size to keep memory bounded on small dynos
+    if len(text) > 120_000:
+        text = text[:120_000]
+
+    # 2. Chunk input
     chunks = chunk_text(text)
 
-    # 2. Extract concepts via LLM
+    # 3. Extract concepts via LLM
     concept_labels = await extract_concepts_llm(text[:6000])  # first ~6k chars for extraction
     if not concept_labels:
         # Fallback: treat each chunk title as a concept
         concept_labels = _fallback_concepts(chunks)
 
-    # 3. Build a small description for each concept from the source text
+    # 4. Build a small description for each concept from the source text
     concept_snippets = _match_concepts_to_chunks(concept_labels, chunks)
 
-    # 4. Embed concept snippets in small batches to reduce memory spikes
+    # 5. Embed concept snippets in small batches to reduce memory spikes
     all_texts = [f"{label}: {snippet}" for label, snippet in concept_snippets]
     embeddings = []
     batch_size = 4
