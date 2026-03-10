@@ -21,15 +21,15 @@ export function TopBar({ onMenuToggle }: TopBarProps) {
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-      className="h-14 md:h-16 bg-[#0D1117] border-b border-[rgba(79,140,255,0.1)] flex items-center justify-between px-4 md:px-6 fixed top-0 left-0 md:left-64 right-0 z-20"
+      className="h-14 md:h-16 bg-[#0D1117] border-b border-[rgba(79,140,255,0.1)] flex items-center justify-between px-4 md:px-6 fixed top-0 left-0 md:left-64 right-0 z-40"
     >
       <div className="flex items-center gap-3 md:gap-6">
         {/* Hamburger for mobile */}
         <button
           onClick={onMenuToggle}
-          className="md:hidden p-2 rounded-lg text-[#8B92A8] hover:text-white hover:bg-[rgba(79,140,255,0.1)] transition-colors"
+          className="md:hidden p-3 -ml-2 rounded-lg text-[#8B92A8] hover:text-white hover:bg-[rgba(79,140,255,0.1)] transition-colors"
         >
-          <Menu className="w-5 h-5" />
+          <Menu className="w-6 h-6" />
         </button>
         <div className="flex items-center gap-2">
           <Brain className="w-5 h-5 text-[#4F8CFF] hidden sm:block" />

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sidebar } from '@/components/Sidebar';
 import { TopBar } from '@/components/TopBar';
 import { LandingPage } from '@/pages/LandingPage';
@@ -18,13 +18,11 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // When auth finishes loading, redirect logged-in users to dashboard
-  const [authResolved, setAuthResolved] = useState(false);
-  if (!authResolved && !loading) {
-    setAuthResolved(true);
-    if (user && currentPage === 'landing') {
+  useEffect(() => {
+    if (!loading && user && currentPage === 'landing') {
       setCurrentPage('dashboard');
     }
-  }
+  }, [user, loading, currentPage]);
 
   // Show loading spinner while Firebase checks auth state
   if (loading) {
@@ -68,7 +66,7 @@ export default function App() {
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard':
-        return <Dashboard key={Date.now()} onNavigate={setCurrentPage} />;
+        return <Dashboard onNavigate={setCurrentPage} />;
       case 'brain-map':
         return <BrainMap onNavigate={setCurrentPage} />;
       case 'upload':
@@ -82,7 +80,7 @@ export default function App() {
       case 'settings':
         return <Settings />;
       default:
-        return <Dashboard key={Date.now()} onNavigate={setCurrentPage} />;
+        return <Dashboard onNavigate={setCurrentPage} />;
     }
   };
 
@@ -95,7 +93,7 @@ export default function App() {
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
-      <TopBar key={currentPage} onMenuToggle={() => setSidebarOpen(prev => !prev)} />
+      <TopBar onMenuToggle={() => setSidebarOpen(prev => !prev)} />
       <main className="md:ml-64 pt-14 md:pt-16 p-4 md:p-6">
         {renderPage()}
       </main>
