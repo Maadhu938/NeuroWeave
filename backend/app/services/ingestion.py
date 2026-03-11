@@ -13,9 +13,8 @@ from app.services.llm import extract_concepts_llm
 
 
 def extract_text_from_pdf(file_bytes: bytes) -> str:
-    doc = fitz.open(stream=file_bytes, filetype="pdf")
-    pages = [page.get_text() for page in doc]
-    doc.close()
+    with fitz.open(stream=file_bytes, filetype="pdf") as doc:
+        pages = [page.get_text() for page in doc]
     return "\n".join(pages)
 
 

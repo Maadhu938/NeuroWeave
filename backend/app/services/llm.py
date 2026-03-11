@@ -45,8 +45,9 @@ async def extract_concepts_llm(text: str) -> List[str]:
             max_tokens=500,
         )
         raw = resp.choices[0].message.content.strip()
-        # Parse JSON array from response
-        match = re.search(r'\[.*\]', raw, re.DOTALL)
+        # Parse JSON array from response (handling markdown blocks)
+        raw_clean = re.sub(r'```(?:json)?\s*(.*?)\s*```', r'\1', raw, flags=re.DOTALL)
+        match = re.search(r'\[.*\]', raw_clean, re.DOTALL)
         if match:
             return json.loads(match.group())
     except Exception:
@@ -124,7 +125,8 @@ async def generate_insights_llm(node_summaries: str) -> List[dict]:
             max_tokens=800,
         )
         raw = resp.choices[0].message.content.strip()
-        match = re.search(r'\[.*\]', raw, re.DOTALL)
+        raw_clean = re.sub(r'```(?:json)?\s*(.*?)\s*```', r'\1', raw, flags=re.DOTALL)
+        match = re.search(r'\[.*\]', raw_clean, re.DOTALL)
         if match:
             results = json.loads(match.group())
             _insights_cache[summary_hash] = (now, results)
@@ -195,7 +197,8 @@ async def generate_quiz_llm(concept: str, content: str, count: int = 5) -> List[
             max_tokens=2000,
         )
         raw = resp.choices[0].message.content.strip()
-        match = re.search(r'\[.*\]', raw, re.DOTALL)
+        raw_clean = re.sub(r'```(?:json)?\s*(.*?)\s*```', r'\1', raw, flags=re.DOTALL)
+        match = re.search(r'\[.*\]', raw_clean, re.DOTALL)
         if match:
             questions = json.loads(match.group())
             # Validate structure

@@ -51,8 +51,10 @@ export function UploadKnowledge({ onNavigate }: UploadKnowledgeProps) {
     try {
       const result = await uploadKnowledge(file);
       handleResult(result);
-    } catch {
-      setProcessingStage('Upload failed. Please try again.');
+    } catch (err: any) {
+      console.error('Upload error:', err);
+      const msg = err.response?.data?.detail || 'Upload failed. Please try again.';
+      setProcessingStage(`Error: ${msg}`);
       setIsUploading(false);
     }
   };
@@ -65,8 +67,10 @@ export function UploadKnowledge({ onNavigate }: UploadKnowledgeProps) {
     try {
       const result = await uploadText(textInput);
       handleResult(result);
-    } catch {
-      setProcessingStage('Processing failed. Please try again.');
+    } catch (err: any) {
+      console.error('Text process error:', err);
+      const msg = err.response?.data?.detail || 'Processing failed. Please try again.';
+      setProcessingStage(`Error: ${msg}`);
       setIsUploading(false);
     }
   };
@@ -155,19 +159,41 @@ export function UploadKnowledge({ onNavigate }: UploadKnowledgeProps) {
                 className="bg-[#131824] border border-[rgba(79,140,255,0.2)] rounded-xl p-6 h-full flex flex-col items-center justify-center"
               >
                 <div className="relative mb-6">
-                  <Loader2 className="w-16 h-16 text-[#4F8CFF] animate-spin" />
-                  <div className="absolute inset-0 blur-xl bg-[#4F8CFF] opacity-50 animate-pulse" />
+                  {processingStage.startsWith('Error') ? (
+                    <AlertCircle className="w-16 h-16 text-[#FF4D6D]" />
+                  ) : (
+                    <>
+                      <Loader2 className="w-16 h-16 text-[#4F8CFF] animate-spin" />
+                      <div className="absolute inset-0 blur-xl bg-[#4F8CFF] opacity-50 animate-pulse" />
+                    </>
+                  )}
                 </div>
                 
-                <h3 className="text-xl font-semibold text-white mb-2">AI Processing</h3>
+                <h3 className="text-xl font-semibold text-white mb-2">
+                  {processingStage.startsWith('Error') ? 'Upload Problem' : 'AI Processing'}
+                </h3>
                 <motion.p 
                   key={processingStage}
                   initial={{ opacity: 0, y: 5 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-[#4F8CFF] mb-6 text-center font-medium"
+                  className={`mb-6 text-center font-medium ${
+                    processingStage.startsWith('Error') ? 'text-[#FF4D6D]' : 'text-[#4F8CFF]'
+                  }`}
                 >
                   {processingStage}
                 </motion.p>
+                
+                {processingStage.startsWith('Error') && (
+                  <button 
+                    onClick={() => {
+                      setIsUploading(false);
+                      setProcessingStage('');
+                    }}
+                    className="px-6 py-2 bg-[rgba(255,255,255,0.05)] hover:bg-[rgba(255,255,255,0.1)] text-[#8B92A8] hover:text-white rounded-lg transition-all"
+                  >
+                    Try Another File
+                  </button>
+                )}
               </motion.div>
             ) : showResults ? (
               <motion.div
