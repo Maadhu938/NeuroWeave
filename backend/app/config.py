@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     environment: str = "development"  # "production" on Render
     firebase_project_id: str = ""
     firebase_service_account: str = ""  # file path OR raw JSON string
+    hf_api_key: str = ""  # Hugging Face Inference API key
 
     @property
     def origins(self) -> List[str]:

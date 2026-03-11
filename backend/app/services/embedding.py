@@ -1,38 +1,64 @@
-"""Sentence-Transformer embedding service (singleton)."""
+"""Embedding service backed by Hugging Face Inference API."""
 
-from functools import lru_cache
 from typing import List
 
+import httpx
 import numpy as np
-import torch
-from sentence_transformers import SentenceTransformer
 
 from app.config import settings
 
 
-# Limit threading to keep memory/CPU under control on small instances.
-torch.set_num_threads(1)
+HF_ENDPOINT = (
+    "https://api-inference.huggingface.co/pipeline/feature-extraction/"
+    "sentence-transformers/all-MiniLM-L6-v2"
+)
 
 
-@lru_cache(maxsize=1)
-def _get_model() -> SentenceTransformer:
-    return SentenceTransformer(settings.embedding_model)
+async def _fetch_embeddings(texts: List[str]) -> List[List[float]]:
+    """Call Hugging Face feature-extraction endpoint for one or more texts."""
+    if not settings.hf_api_key:
+        raise RuntimeError("HF_API_KEY is not configured.")
+
+    headers = {
+        "Authorization": f"Bearer {settings.hf_api_key}",
+        "Content-Type": "application/json",
+    }
+
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        resp = await client.post(HF_ENDPOINT, headers=headers, json={"inputs": texts})
+        resp.raise_for_status()
+        data = resp.json()
+
+    # HF returns:
+    # - single text: [dim]
+    # - batch: [[dim], [dim], ...]
+    if isinstance(data[0], (float, int)):
+        vectors = [data]
+    else:
+        vectors = data
+
+    # L2-normalise each vector
+    normalised: List[List[float]] = []
+    for vec in vectors:
+        arr = np.asarray(vec, dtype=float)
+        norm = float(np.linalg.norm(arr))
+        if norm > 0.0:
+            arr = arr / norm
+        normalised.append(arr.tolist())
+    return normalised
 
 
-def embed_texts(texts: List[str]) -> List[List[float]]:
+async def embed_batch(texts: List[str]) -> List[List[float]]:
     """Return L2-normalised embeddings for a list of texts."""
-    model = _get_model()
-    vectors = model.encode(
-        texts,
-        normalize_embeddings=True,
-        show_progress_bar=False,
-        batch_size=8,
-    )
-    return vectors.tolist()
+    if not texts:
+        return []
+    return await _fetch_embeddings(texts)
 
 
-def embed_single(text: str) -> List[float]:
-    return embed_texts([text])[0]
+async def embed_single(text: str) -> List[float]:
+    """Return L2-normalised embedding for a single text."""
+    vectors = await _fetch_embeddings([text])
+    return vectors[0]
 
 
 def cosine_similarity(a: List[float], b: List[float]) -> float:

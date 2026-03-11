@@ -11,7 +11,7 @@ from app.services.embedding import embed_single
 
 async def search_similar(db: AsyncSession, query: str, user_id: str, top_k: int = 8) -> List[Tuple[KnowledgeNode, float]]:
     """Find the top_k most relevant knowledge nodes combining vector similarity and keyword match."""
-    query_vec = embed_single(query)
+    query_vec = await embed_single(query)
     vec_literal = "[" + ",".join(str(v) for v in query_vec) + "]"
 
     # 1. Vector similarity search

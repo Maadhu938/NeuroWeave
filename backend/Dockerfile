@@ -11,7 +11,7 @@ RUN groupadd -r appuser && useradd -r -g appuser -d /app -s /sbin/nologin appuse
 
 WORKDIR /app
 
-# System deps for sentence-transformers
+# System deps (build tools, optional)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential && \
     rm -rf /var/lib/apt/lists/*
@@ -20,9 +20,6 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
-
-# Pre-download embedding model during build so runtime doesn't spike memory on first request
-RUN python -c "from sentence_transformers import SentenceTransformer; SentenceTransformer('all-MiniLM-L6-v2')"
 
 RUN chown -R appuser:appuser /app
 USER appuser

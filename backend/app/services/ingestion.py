@@ -8,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.models import KnowledgeNode, KnowledgeEdge, UploadRecord
-from app.services.embedding import embed_texts, cosine_similarity
+from app.services.embedding import embed_batch, cosine_similarity
 from app.services.llm import extract_concepts_llm
 
 
@@ -70,7 +70,8 @@ async def ingest_text(
     batch_size = 4
     for i in range(0, len(all_texts), batch_size):
         batch = all_texts[i : i + batch_size]
-        embeddings.extend(embed_texts(batch))
+        batch_vectors = await embed_batch(batch)
+        embeddings.extend(batch_vectors)
 
     # 5. Upsert nodes
     created_nodes: List[KnowledgeNode] = []
