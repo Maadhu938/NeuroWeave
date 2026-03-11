@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Upload, FileText, CheckCircle, Loader2, Brain, Link2, Clock } from 'lucide-react';
+import { Upload, FileText, CheckCircle, AlertCircle, Loader2, Brain, Link2, Clock } from 'lucide-react';
 import { uploadKnowledge, uploadText, getRecentUploads, type UploadResult, type RecentUpload } from '@/lib/api';
 
 interface UploadKnowledgeProps {
