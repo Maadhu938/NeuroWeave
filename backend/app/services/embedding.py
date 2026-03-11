@@ -9,7 +9,7 @@ from app.config import settings
 
 
 HF_ENDPOINT = (
-    "https://router.huggingface.co/hf-inference/models/sentence-transformers/all-MiniLM-L6-v2"
+    "https://router.huggingface.co/hf-inference/models/BAAI/bge-small-en-v1.5"
 )
 
 
