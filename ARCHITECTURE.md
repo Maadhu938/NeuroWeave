@@ -177,7 +177,7 @@ PDF / Raw Text
  Match Concepts to Chunks  (keyword overlap scoring)
       │
       ▼
- Generate Embeddings  (Sentence-Transformers all-MiniLM-L6-v2 → 384-d vectors)
+ Generate Embeddings  (Hugging Face Inference API → all-MiniLM-L6-v2, 384-d vectors)
       │
       ▼
  Upsert KnowledgeNodes  (dedup by label, stores content + embedding + category)
@@ -220,11 +220,11 @@ MemoryStrength = BASE(0.5)
 
 ### 4.3 Embedding Service (`services/embedding.py`)
 
-- **Model:** `all-MiniLM-L6-v2` (384 dimensions, lightweight, fast)
-- Loaded once as a singleton via `@lru_cache`
-- `embed_texts()` — batch embedding with L2 normalisation
-- `embed_single()` — single text convenience wrapper
-- `cosine_similarity()` — used during edge construction
+- **Model:** `all-MiniLM-L6-v2` (384 dimensions) served via **Hugging Face Inference API**
+- No local model load — embeddings are computed remotely using `httpx.AsyncClient`
+- `embed_batch()` — async batch embedding with L2 normalisation
+- `embed_single()` — async single text convenience wrapper
+- `cosine_similarity()` — used during edge construction and analytics
 
 ### 4.4 LLM Service (`services/llm.py`)
 
@@ -283,7 +283,7 @@ Frontend: POST /api/upload (FormData)
 Backend: extract_text_from_pdf() → chunk_text() → extract_concepts_llm()
       │
       ▼
-Backend: embed_texts() → upsert KnowledgeNodes (with 384-d vector)
+Backend: embed_batch() → upsert KnowledgeNodes (with 384-d vector)
       │
       ▼
 Backend: cosine_similarity() > 0.35 → create KnowledgeEdges
@@ -436,7 +436,7 @@ upload_records
 | **Backend** | FastAPI 0.115.6 | Async Python API server |
 | **Database** | Supabase PostgreSQL | Managed Postgres with pgvector |
 | **Vector DB** | pgvector (IVFFlat) | 384-d cosine similarity search |
-| **Embeddings** | Sentence-Transformers (all-MiniLM-L6-v2) | Text → 384-d vectors |
+| **Embeddings** | Hugging Face Inference API (`all-MiniLM-L6-v2`) | Text → 384-d vectors |
 | **LLM** | Groq API (Llama-3.3-70b) | Concept extraction, Q&A, insights |
 | **PDF Parsing** | PyMuPDF (fitz) | PDF → plain text extraction |
 | **ORM** | SQLAlchemy 2.0 (async) | Database models & queries |
@@ -552,7 +552,7 @@ Neuroweave Project/
         │   └── metrics.py      # GET /api/metrics/topbar + /api/ai/insights
         └── services/
             ├── __init__.py
-            ├── embedding.py    # Sentence-Transformers (384-d)
+            ├── embedding.py    # HF Inference API embeddings (384-d)
             ├── ingestion.py    # PDF/text → chunks → concepts → graph
             ├── nama.py         # NAMA algorithm
             ├── llm.py          # Groq Llama-3 integration
