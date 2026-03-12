@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
-import { TrendingDown, RefreshCw, Info } from 'lucide-react';
+import { TrendingDown, Info } from 'lucide-react';
 import { getMemoryDecay, type DecayDataPoint } from '@/lib/api';
 
 interface MemoryDecayChartProps {
@@ -10,8 +10,6 @@ interface MemoryDecayChartProps {
 
 export function MemoryDecayChart({ concept = 'Selected Concept' }: MemoryDecayChartProps) {
   const [decayData, setDecayData] = useState<DecayDataPoint[]>([]);
-  const [reviewBoosts, setReviewBoosts] = useState<Set<number>>(new Set());
-  const [reviewCount, setReviewCount] = useState(0);
 
   useEffect(() => {
     if (!concept || concept === 'Selected Concept') return;
@@ -20,24 +18,11 @@ export function MemoryDecayChart({ concept = 'Selected Concept' }: MemoryDecayCh
       .catch(() => { /* API not available – keep empty */ });
   }, [concept]);
 
-  // Apply local review boosts on top of API data
-  const displayData = decayData.map((point) => {
-    let boostedStrength = point.strength;
-    for (const boostDay of reviewBoosts) {
-      if (point.day >= boostDay) {
-        const daysAfter = point.day - boostDay;
-        boostedStrength = Math.min(1.0, boostedStrength + 0.15 * Math.exp(-0.2 * daysAfter));
-      }
-    }
-    return { ...point, strength: Math.max(0.05, boostedStrength), reviewed: point.reviewed || reviewBoosts.has(point.day) };
-  });
-
-  const handleReview = () => {
-    // Add a simulated review at a calculated day
-    const nextDay = reviewCount === 0 ? 5 : reviewCount === 1 ? 10 : 20;
-    setReviewBoosts((prev) => new Set(prev).add(nextDay));
-    setReviewCount((prev) => prev + 1);
-  };
+  // Use backend-provided decay curve directly (already NAMA-aligned)
+  const displayData = decayData.map((point) => ({
+    ...point,
+    strength: Math.max(0.0, Math.min(1.0, point.strength)),
+  }));
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -69,17 +54,10 @@ export function MemoryDecayChart({ concept = 'Selected Concept' }: MemoryDecayCh
             <TrendingDown className="w-5 h-5 text-[#FF4D6D]" />
             Memory Decay Curve
           </h2>
-          <p className="text-sm text-[#8B92A8]">NAMA Algorithm Prediction for: {concept}</p>
+          <p className="text-sm text-[#8B92A8]">
+            NAMA Algorithm prediction for: {concept}
+          </p>
         </div>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={handleReview}
-          className="px-4 py-2 bg-gradient-to-r from-[#4F8CFF] to-[#7A5CFF] text-white rounded-lg flex items-center gap-2 text-sm"
-        >
-          <RefreshCw className="w-4 h-4" />
-          Simulate Review
-        </motion.button>
       </div>
 
       <ResponsiveContainer width="100%" height={300}>
@@ -148,7 +126,9 @@ export function MemoryDecayChart({ concept = 'Selected Concept' }: MemoryDecayCh
         </div>
         <div className="bg-[rgba(0,255,163,0.1)] border border-[rgba(0,255,163,0.2)] rounded-lg p-3">
           <p className="text-xs text-[#8B92A8] mb-1">Reviews</p>
-          <p className="text-lg font-bold text-[#00FFA3]">{reviewCount}</p>
+          <p className="text-lg font-bold text-[#00FFA3]">
+            {displayData.filter(p => p.reviewed).length}
+          </p>
         </div>
       </div>
 

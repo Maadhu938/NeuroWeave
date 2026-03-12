@@ -53,7 +53,7 @@ export function UploadKnowledge({ onNavigate }: UploadKnowledgeProps) {
       handleResult(result);
     } catch (err: any) {
       console.error('Upload error:', err);
-      const msg = err.response?.data?.detail || 'Upload failed. Please try again.';
+      const msg = err instanceof Error ? err.message : 'Upload failed. Please try again.';
       setProcessingStage(`Error: ${msg}`);
       setIsUploading(false);
     }
@@ -69,7 +69,7 @@ export function UploadKnowledge({ onNavigate }: UploadKnowledgeProps) {
       handleResult(result);
     } catch (err: any) {
       console.error('Text process error:', err);
-      const msg = err.response?.data?.detail || 'Processing failed. Please try again.';
+      const msg = err instanceof Error ? err.message : 'Processing failed. Please try again.';
       setProcessingStage(`Error: ${msg}`);
       setIsUploading(false);
     }

@@ -53,6 +53,9 @@ async def get_study_plan_data(db: AsyncSession, user_id: str) -> Dict:
 
     # ── Sort by strength ascending → weakest first ──────────
     sorted_nodes = sorted(nodes, key=lambda n: n.strength or 0.0)
+    # Only consider genuinely weak concepts (below retention threshold)
+    WEAK_THRESHOLD = 0.7
+    weak_nodes = [n for n in sorted_nodes if (n.strength or 0.0) < WEAK_THRESHOLD]
 
     # Recommendations — only concepts not yet reviewed today
     today_reviewed_ids = set()
@@ -60,7 +63,7 @@ async def get_study_plan_data(db: AsyncSession, user_id: str) -> Dict:
         today_reviewed_ids.add(log.node_id)
 
     recommendations = []
-    for n in sorted_nodes[:8]:
+    for n in weak_nodes[:8] or sorted_nodes[:4]:
         s = n.strength or 0.0
         priority = "critical" if s < 0.25 else "high" if s < 0.45 else "medium" if s < 0.65 else "low"
         time = "15 min" if s < 0.3 else "10 min" if s < 0.6 else "5 min"

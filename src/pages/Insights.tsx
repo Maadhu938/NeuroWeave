@@ -123,8 +123,8 @@ export function Insights() {
           <ResponsiveContainer width="100%" height={280}>
             <BarChart data={learningPatterns}>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(79,140,255,0.1)" />
-              <XAxis dataKey="time" stroke="#8B92A8" />
-              <YAxis stroke="#8B92A8" />
+              <XAxis dataKey="time" stroke="#8B92A8" tick={{ fill: '#8B92A8', fontSize: 12 }} />
+              <YAxis stroke="#8B92A8" tick={{ fill: '#8B92A8', fontSize: 12 }} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: '#131824',

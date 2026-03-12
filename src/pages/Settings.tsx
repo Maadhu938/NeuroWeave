@@ -1,23 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion } from 'motion/react';
 import { User, Bell, Brain, Database, Shield, Settings as SettingsIcon, AlertTriangle, Check, Loader2, Download } from 'lucide-react';
 import { updateProfile } from 'firebase/auth';
 import { useAuth } from '@/hooks/useAuth';
-import { getKnowledgeGraph, clearUserData } from '@/lib/api';
+import { getKnowledgeGraph, clearUserData, getUserSettings, updateUserSettings, type UserPreferences } from '@/lib/api';
 
 const PREFS_KEY = 'neuroweave_settings';
 
-interface Preferences {
-  dailyReminders: boolean;
-  autoStudyPlans: boolean;
-  smartConnections: boolean;
-  studyDuration: string;
-  decayAlerts: boolean;
-  aiInsights: boolean;
-  weeklyReport: boolean;
-}
-
-const defaultPrefs: Preferences = {
+const defaultPrefs: UserPreferences = {
   dailyReminders: true,
   autoStudyPlans: true,
   smartConnections: true,
@@ -27,7 +17,7 @@ const defaultPrefs: Preferences = {
   weeklyReport: false,
 };
 
-function loadPrefs(): Preferences {
+function loadPrefs(): UserPreferences {
   try {
     const raw = localStorage.getItem(PREFS_KEY);
     return raw ? { ...defaultPrefs, ...JSON.parse(raw) } : defaultPrefs;
@@ -39,18 +29,46 @@ function loadPrefs(): Preferences {
 export function Settings() {
   const { user } = useAuth();
   const [displayName, setDisplayName] = useState(user?.displayName || '');
-  const [prefs, setPrefs] = useState<Preferences>(loadPrefs);
+  const [prefs, setPrefs] = useState<UserPreferences>(loadPrefs);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [clearing, setClearing] = useState(false);
+  const hydratedFromServerRef = useRef(false);
+  const saveTimerRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    // Load server-side prefs if available, otherwise keep local defaults.
+    getUserSettings()
+      .then((serverPrefs) => {
+        const merged = { ...defaultPrefs, ...serverPrefs };
+        setPrefs(merged);
+        localStorage.setItem(PREFS_KEY, JSON.stringify(merged));
+        hydratedFromServerRef.current = true;
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     localStorage.setItem(PREFS_KEY, JSON.stringify(prefs));
   }, [prefs]);
 
-  const togglePref = useCallback((key: keyof Preferences) => {
+  useEffect(() => {
+    // Auto-save preferences to backend (debounced) after initial load.
+    if (!hydratedFromServerRef.current) return;
+    if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);
+
+    saveTimerRef.current = window.setTimeout(() => {
+      updateUserSettings(prefs).catch(() => {});
+    }, 600);
+
+    return () => {
+      if (saveTimerRef.current) window.clearTimeout(saveTimerRef.current);
+    };
+  }, [prefs]);
+
+  const togglePref = useCallback((key: keyof UserPreferences) => {
     setPrefs(prev => ({ ...prev, [key]: !prev[key] }));
   }, []);
 

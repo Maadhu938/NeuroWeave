@@ -126,6 +126,38 @@ async def get_insights_data(db: AsyncSession, user_id: str) -> Dict:
         for i, (cat, s) in enumerate(cat_map.items())
     ]
 
+    # Fallback recommendations if LLM is unavailable or returns nothing
+    if not insights:
+        fallback: List[Dict] = []
+        if knowledge_coverage:
+            weakest = min(knowledge_coverage, key=lambda x: x["score"])
+            fallback.append({
+                "title": "Reinforce weak subject",
+                "description": f"{weakest['subject']} has the lowest coverage at {weakest['score']}%. Schedule focused reviews here.",
+                "type": "warning",
+            })
+        if subject_retention:
+            weakest_ret = min(subject_retention, key=lambda x: x["retention"])
+            fallback.append({
+                "title": "Low retention area",
+                "description": f"Retention for {weakest_ret['subject']} is only {weakest_ret['retention']}%. Revisit foundational material.",
+                "type": "suggestion",
+            })
+        if learning_patterns:
+            best_slot = max(learning_patterns, key=lambda x: x["effectiveness"])
+            fallback.append({
+                "title": "Best study time",
+                "description": f"Your reviews are most effective around {best_slot['time']}. Try to schedule key sessions then.",
+                "type": "info",
+            })
+        if not fallback:
+            fallback.append({
+                "title": "Get started",
+                "description": "Upload knowledge and complete a few reviews to unlock personalised AI insights.",
+                "type": "info",
+            })
+        insights = fallback
+
     return {
         "insights": insights,
         "knowledgeCoverage": knowledge_coverage,

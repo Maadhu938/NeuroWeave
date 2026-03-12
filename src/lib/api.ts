@@ -296,6 +296,27 @@ export function clearUserData(): Promise<{ status: string }> {
   return request<{ status: string }>('/api/user/data', { method: 'DELETE' });
 }
 
+export interface UserPreferences {
+  dailyReminders: boolean;
+  autoStudyPlans: boolean;
+  smartConnections: boolean;
+  studyDuration: string;
+  decayAlerts: boolean;
+  aiInsights: boolean;
+  weeklyReport: boolean;
+}
+
+export function getUserSettings(): Promise<Partial<UserPreferences>> {
+  return request<Partial<UserPreferences>>('/api/user/settings');
+}
+
+export function updateUserSettings(prefs: UserPreferences): Promise<{ status: string }> {
+  return request<{ status: string }>('/api/user/settings', {
+    method: 'PUT',
+    body: JSON.stringify(prefs),
+  });
+}
+
 // ── Review / Quiz ──────────────────────────────────────────
 
 export interface QuizQuestion {

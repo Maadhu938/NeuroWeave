@@ -5,6 +5,7 @@ from sqlalchemy import (
     Column, String, Float, Integer, DateTime, Boolean, Text, ForeignKey, Index
 )
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import JSONB
 from pgvector.sqlalchemy import Vector
 
 from app.database import Base
@@ -69,3 +70,11 @@ class UploadRecord(Base):
     concepts_extracted = Column(Integer, default=0)
     relationships_found = Column(Integer, default=0)
     created_at = Column(DateTime, default=datetime.utcnow)
+
+
+class UserSettings(Base):
+    __tablename__ = "user_settings"
+
+    user_id = Column(String(128), primary_key=True)
+    preferences = Column(JSONB, nullable=False, default=dict)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

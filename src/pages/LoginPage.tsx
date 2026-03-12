@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Brain, Mail, Lock, User, Eye, EyeOff, ArrowRight, Sparkles } from 'lucide-react';
+import { Mail, Lock, User, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
 interface LoginPageProps {
@@ -74,21 +74,11 @@ export function LoginPage({ onSuccess }: LoginPageProps) {
         transition={{ type: 'spring', stiffness: 260, damping: 20 }}
         className="relative z-10 w-full max-w-md mx-4"
       >
-        {/* Logo */}
+        {/* Minimal Header */}
         <div className="text-center mb-8">
-          <motion.div
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: 'spring' }}
-            className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-[#4F8CFF] to-[#7A5CFF] mb-4"
-          >
-            <Brain className="w-8 h-8 text-white" />
-          </motion.div>
-          <h1 className="text-3xl font-bold text-white mb-2">
-            {isSignUp ? 'Join Neuroweave' : 'Welcome Back'}
-          </h1>
+          <h1 className="text-3xl font-bold text-white mb-2">Neuroweave</h1>
           <p className="text-[#8B92A8]">
-            {isSignUp ? 'Create your neural learning account' : 'Sign in to your neural interface'}
+            {isSignUp ? 'Create your learning account' : 'Sign in to continue'}
           </p>
         </div>
 
@@ -216,9 +206,8 @@ export function LoginPage({ onSuccess }: LoginPageProps) {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-[#555C70] text-xs mt-6 flex items-center justify-center gap-1">
-          <Sparkles className="w-3 h-3" />
-          Powered by Neural Intelligence
+        <p className="text-center text-[#555C70] text-xs mt-6">
+          Neuroweave · Cognitive Knowledge System
         </p>
       </motion.div>
     </div>
