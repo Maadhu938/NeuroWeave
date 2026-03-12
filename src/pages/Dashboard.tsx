@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Brain, TrendingUp, AlertCircle, Calendar, Sparkles, Target, Zap } from 'lucide-react';
 import { motion } from 'motion/react';
 import { AreaChart, Area, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -23,7 +23,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const [aiInsight, setAiInsight] = useState('');
   const [showHeavyComponents, setShowHeavyComponents] = useState({ ai: false, heatmap: false, decay: false });
 
-  useEffect(() => {
+  const fetchDashboard = useCallback(() => {
     getDashboard()
       .then((data: DashboardData) => {
         setRetentionData(data.retentionData);
@@ -39,18 +39,35 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         setAiInsight(data.aiInsight);
       })
       .catch(() => { /* API not available yet */ });
+  }, []);
+
+  useEffect(() => {
+    fetchDashboard();
 
     // Faster staggered loading
     const t1 = setTimeout(() => setShowHeavyComponents(prev => ({ ...prev, ai: true })), 400);
     const t2 = setTimeout(() => setShowHeavyComponents(prev => ({ ...prev, heatmap: true })), 1000);
     const t3 = setTimeout(() => setShowHeavyComponents(prev => ({ ...prev, decay: true })), 1600);
 
+    const onDataCleared = () => {
+      // Reset local state immediately, then refetch.
+      setRetentionData([]);
+      setKnowledgeStrength([]);
+      setWeakAreas([]);
+      setUpcomingReviews([]);
+      setMetrics({ knowledgeScore: '--', retentionRate: '--', conceptsMastered: '--', studyStreak: '--' });
+      setAiInsight('');
+      fetchDashboard();
+    };
+    window.addEventListener('neuroweave:dataCleared', onDataCleared as EventListener);
+
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
       clearTimeout(t3);
+      window.removeEventListener('neuroweave:dataCleared', onDataCleared as EventListener);
     };
-  }, []);
+  }, [fetchDashboard]);
 
   return (
     <div className="space-y-4 md:space-y-6">

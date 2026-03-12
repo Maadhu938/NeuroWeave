@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'motion/react';
 import { Calendar, Clock, Target, CheckCircle, AlertCircle, TrendingUp } from 'lucide-react';
 import { getStudyPlan, type StudyRecommendation, type WeekDay, type Milestone } from '@/lib/api';
@@ -20,7 +20,7 @@ export function StudyPlanner({ onNavigate }: StudyPlannerProps) {
   const [loading, setLoading] = useState(false);
   const [reviewConcept, setReviewConcept] = useState<{ label: string; strength: number } | null>(null);
 
-  const fetchPlan = () => {
+  const fetchPlan = useCallback(() => {
     setLoading(true);
     getStudyPlan()
       .then((data) => {
@@ -31,11 +31,21 @@ export function StudyPlanner({ onNavigate }: StudyPlannerProps) {
       })
       .catch(() => { /* API not available yet */ })
       .finally(() => setLoading(false));
-  };
+  }, []);
 
   useEffect(() => {
     fetchPlan();
-  }, []);
+
+    const onDataCleared = () => {
+      setTodayRecommendations([]);
+      setWeekSchedule([]);
+      setUpcomingMilestones([]);
+      setStats({ totalReviews: 0, completed: 0, timeSpent: '--', avgScore: 0 });
+      fetchPlan();
+    };
+    window.addEventListener('neuroweave:dataCleared', onDataCleared as EventListener);
+    return () => window.removeEventListener('neuroweave:dataCleared', onDataCleared as EventListener);
+  }, [fetchPlan]);
 
   return (
     <div className="space-y-4 md:space-y-6">

@@ -11,9 +11,21 @@ export function TopBar({ onMenuToggle }: TopBarProps) {
   const [metrics, setMetrics] = useState({ knowledgeScore: '--', retentionRate: '--', studyStreak: '--' });
 
   useEffect(() => {
-    getTopBarMetrics()
-      .then(setMetrics)
-      .catch(() => { /* API not available yet */ });
+    const fetchMetrics = () => {
+      getTopBarMetrics()
+        .then(setMetrics)
+        .catch(() => { /* API not available yet */ });
+    };
+
+    fetchMetrics();
+
+    const onDataCleared = () => {
+      setMetrics({ knowledgeScore: '0%', retentionRate: '0%', studyStreak: '0 days' });
+      fetchMetrics();
+    };
+
+    window.addEventListener('neuroweave:dataCleared', onDataCleared as EventListener);
+    return () => window.removeEventListener('neuroweave:dataCleared', onDataCleared as EventListener);
   }, []);
 
   return (

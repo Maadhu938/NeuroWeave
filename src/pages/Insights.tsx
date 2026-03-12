@@ -3,13 +3,14 @@ import { motion } from 'motion/react';
 import { TrendingUp, Brain, Clock, Target, Lightbulb, AlertTriangle } from 'lucide-react';
 import { RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { MemoryDecayChart } from '@/components/MemoryDecayChart';
-import { getInsights, type InsightsData, type SubjectRetention } from '@/lib/api';
+import { getInsights, getDashboard, type InsightsData, type SubjectRetention } from '@/lib/api';
 
 export function Insights() {
   const [knowledgeCoverage, setKnowledgeCoverage] = useState<{ subject: string; score: number }[]>([]);
   const [learningPatterns, setLearningPatterns] = useState<{ time: string; effectiveness: number }[]>([]);
   const [subjectRetention, setSubjectRetention] = useState<SubjectRetention[]>([]);
   const [insights, setInsights] = useState<{ icon: React.ReactNode; title: string; description: string; type: string; color: string }[]>([]);
+  const [weakConcept, setWeakConcept] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     getInsights()
@@ -31,6 +32,11 @@ export function Insights() {
         );
       })
       .catch(() => { /* API not available yet */ });
+
+    // Memory decay needs a concept label (not a subject/category). Reuse dashboard weakAreas.
+    getDashboard()
+      .then((d) => setWeakConcept(d.weakAreas?.[0]?.topic))
+      .catch(() => {});
   }, []);
 
   return (
@@ -233,11 +239,7 @@ export function Insights() {
       </motion.div>
 
       {/* Memory Decay Analysis */}
-      <MemoryDecayChart concept={
-        subjectRetention.length > 0
-          ? [...subjectRetention].sort((a, b) => a.retention - b.retention)[0].subject
-          : undefined
-      } />
+      <MemoryDecayChart concept={weakConcept} />
     </div>
   );
 }

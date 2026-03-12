@@ -105,6 +105,8 @@ export function Settings() {
       localStorage.removeItem(PREFS_KEY);
       setPrefs(defaultPrefs);
       setShowClearConfirm(false);
+      // Notify always-mounted panels (TopBar) to refresh immediately.
+      window.dispatchEvent(new Event('neuroweave:dataCleared'));
     } catch { /* ignore */ }
     setClearing(false);
   };
