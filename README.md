@@ -2,78 +2,85 @@
 
 > Weaving intelligence from data, models, and algorithms.
 
-Production frontend for [neuroweave.in](https://neuroweave.in).
+Neuroweave is an **AI-powered adaptive learning platform** that transforms static study materials into dynamic, interactive knowledge graphs. Using the proprietary **NAMA Algorithm**, it tracks your memory retention and generates personalized study schedules to optimize your learning velocity.
 
-## Tech Stack
+[neuroweave.in](https://neuroweave.in) | [api.neuroweave.in](https://api.neuroweave.in) | [Architecture Guide](ARCHITECTURE.md)
 
-- **React 18** + **TypeScript**
-- **Tailwind CSS 4** (via Vite plugin)
-- **Recharts** for data visualization
-- **Motion** for animations
-- **Lucide React** for icons
+---
 
-## Project Structure
+## 🧠 Core Features
 
-```
-src/
-├── components/       # Reusable UI components (Sidebar, TopBar, charts)
-├── pages/            # Page-level components (Dashboard, BrainMap, etc.)
-├── hooks/            # Custom React hooks (useApi)
-├── lib/              # Utilities and API client (api.ts)
-├── services/         # Business logic services
-├── styles/           # CSS (Tailwind, fonts, theme)
-└── app/              # App root and routing
-```
+- **Brain Map:** Interactive, force-directed knowledge graph of your study materials.
+- **NAMA Algorithm:** Adaptive memory strength tracking based on reviews, performance, and graph connectivity.
+- **Ask Your Brain:** RAG-powered Q&A interface for contextual querying of your knowledge base.
+- **Adaptive Study Planner:** Automatically prioritized review sessions and learning milestones.
+- **Deep Analytics:** Visualization of memory decay and topical knowledge coverage.
 
-## Getting Started
+---
 
+## 🏗️ Project Structure
+
+- **`src/`** (Frontend): React 18 + TypeScript + Vite + Tailwind CSS.
+- **`backend/`** (API): FastAPI + Python 3.12 + SQLAlchemy + pgvector.
+- **`ARCHITECTURE.md`**: Detailed technical breakdown and data flows.
+
+---
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
+- Node.js (v18+)
+- Python (3.12+)
+- PostgreSQL with `pgvector` extension (e.g., Supabase)
+
+### 2. Backend Setup
 ```bash
+cd backend
+python -m venv venv
+# Windows: venv\Scripts\activate | macOS/Linux: source venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env # Add your DATABASE_URL and GROQ_API_KEY
+uvicorn app.main:app --reload --port 8000
+```
+
+### 3. Frontend Setup
+```bash
+# From root directory
 npm install
 npm run dev
 ```
 
-## Environment Variables
+---
 
-| Variable        | Description                | Default                       |
-| --------------- | -------------------------- | ----------------------------- |
-| `VITE_API_URL`  | Backend API base URL       | `https://api.neuroweave.in`   |
+## ⚙️ Environment Variables
 
-For local development, create `.env.development`:
+### Frontend (`.env` / `.env.development`)
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `VITE_API_URL` | Backend API base URL | `https://api.neuroweave.in` |
 
-```
-VITE_API_URL=http://localhost:8000
-```
+### Backend (`.env`)
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `DATABASE_URL` | PostgreSQL connection string | Yes |
+| `GROQ_API_KEY` | API Key for Llama-3 models | Yes |
+| `CORS_ORIGINS` | Allowed origins for CORS | No |
 
-## Build & Preview
+---
 
-```bash
-npm run build     # Production build → dist/
-npm run preview   # Preview production build locally
-```
+## 🧪 NAMA Algorithm
 
-## Deploy to Vercel
+The **Neuroweave Adaptive Memory Algorithm** calculates `MemoryStrength` using:
+- **Review History:** √(count) factor for diminishing returns.
+- **Performance:** Direct quiz and interaction scores.
+- **Graph Context:** Reinforcement from related nodes in the knowledge graph.
+- **Time Decay:** Logarithmic forgetting curve based on days since last review.
 
-1. Push this repository to GitHub.
-2. Import the project in [Vercel](https://vercel.com).
-3. Set **Framework Preset** to `Vite`.
-4. Add the environment variable `VITE_API_URL` pointing to your FastAPI backend.
-5. Set the custom domain to `neuroweave.in` in Vercel project settings.
-6. Deploy.
+---
 
-## Backend Integration
+## 🛠️ Tech Stack
 
-All API calls go through `src/lib/api.ts`. The backend (FastAPI) is expected at the URL defined by `VITE_API_URL`. Key endpoints:
-
-| Function             | Endpoint                  | Method |
-| -------------------- | ------------------------- | ------ |
-| `getDashboard()`     | `/api/dashboard`          | GET    |
-| `getInsights()`      | `/api/insights`           | GET    |
-| `getKnowledgeGraph()`| `/api/knowledge-graph`    | GET    |
-| `uploadKnowledge()`  | `/api/upload`             | POST   |
-| `uploadText()`       | `/api/upload/text`        | POST   |
-| `getStudyPlan()`     | `/api/study-plan`         | GET    |
-| `askBrain()`         | `/api/ask`                | POST   |
-| `getMemoryHeatmap()` | `/api/memory/heatmap`     | GET    |
-| `getMemoryDecay()`   | `/api/memory/decay`       | GET    |
-| `getAIInsights()`    | `/api/ai/insights`        | GET    |
-| `getTopBarMetrics()` | `/api/metrics/topbar`     | GET    |
+- **Frontend:** React, TypeScript, Vite, Tailwind CSS, Recharts, Motion (framer-motion), Lucide.
+- **Backend:** FastAPI, Pydantic, SQLAlchemy, PyMuPDF (fitz).
+- **AI/ML:** Groq (Llama-3.3-70b), Hugging Face (BGE-Small Embeddings), pgvector.
+- **Infrastructure:** Vercel (Frontend), Render/Railway (Backend), Supabase (Postgres).
