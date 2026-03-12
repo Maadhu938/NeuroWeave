@@ -55,7 +55,7 @@ Neuroweave is an **AI-powered adaptive learning system** that transforms uploade
 │  │  └────────────┘  └──────────┘  └────────────────────┘   │    │
 │  │  ┌────────────┐  ┌──────────┐  ┌────────────────────┐   │    │
 │  │  │ Embedding  │  │  Graph   │  │   Vector Search    │   │    │
-│  │  │ (MiniLM)   │  │ Service  │  │   (pgvector)       │   │    │
+│  │  │ (BGE-Small)│  │ Service  │  │   (pgvector)       │   │    │
 │  │  └────────────┘  └──────────┘  └────────────────────┘   │    │
 │  │  ┌────────────┐  ┌──────────┐                           │    │
 │  │  │  Insights  │  │ Planner  │                           │    │
@@ -177,7 +177,7 @@ PDF / Raw Text
  Match Concepts to Chunks  (keyword overlap scoring)
       │
       ▼
- Generate Embeddings  (Hugging Face Inference API → all-MiniLM-L6-v2, 384-d vectors)
+ Generate Embeddings  (Hugging Face Router API → bge-small-en-v1.5, 384-d vectors)
       │
       ▼
  Upsert KnowledgeNodes  (dedup by label, stores content + embedding + category)
@@ -220,8 +220,9 @@ MemoryStrength = BASE(0.5)
 
 ### 4.3 Embedding Service (`services/embedding.py`)
 
-- **Model:** `all-MiniLM-L6-v2` (384 dimensions) served via **Hugging Face Inference API**
+- **Model:** `BAAI/bge-small-en-v1.5` (384 dimensions) served via **Hugging Face Router API** (serverless)
 - No local model load — embeddings are computed remotely using `httpx.AsyncClient`
+- Switched to BGE model via `router.huggingface.co` to resolve stability issues with the old API.
 - `embed_batch()` — async batch embedding with L2 normalisation
 - `embed_single()` — async single text convenience wrapper
 - `cosine_similarity()` — used during edge construction and analytics
@@ -436,7 +437,7 @@ upload_records
 | **Backend** | FastAPI 0.115.6 | Async Python API server |
 | **Database** | Supabase PostgreSQL | Managed Postgres with pgvector |
 | **Vector DB** | pgvector (IVFFlat) | 384-d cosine similarity search |
-| **Embeddings** | Hugging Face Inference API (`all-MiniLM-L6-v2`) | Text → 384-d vectors |
+| **Embeddings** | Hugging Face Router API (`bge-small-en-v1.5`) | Text → 384-d vectors |
 | **LLM** | Groq API (Llama-3.3-70b) | Concept extraction, Q&A, insights |
 | **PDF Parsing** | PyMuPDF (fitz) | PDF → plain text extraction |
 | **ORM** | SQLAlchemy 2.0 (async) | Database models & queries |
@@ -552,7 +553,7 @@ Neuroweave Project/
         │   └── metrics.py      # GET /api/metrics/topbar + /api/ai/insights
         └── services/
             ├── __init__.py
-            ├── embedding.py    # HF Inference API embeddings (384-d)
+            ├── embedding.py    # HF Router API embeddings (384-d)
             ├── ingestion.py    # PDF/text → chunks → concepts → graph
             ├── nama.py         # NAMA algorithm
             ├── llm.py          # Groq Llama-3 integration
