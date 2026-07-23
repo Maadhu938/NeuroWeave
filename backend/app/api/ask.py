@@ -20,21 +20,20 @@ async def ask_brain(body: AskRequest, user: dict = Depends(get_current_user), db
         return {"answer": "Please ask a question.", "relatedConcepts": [], "knowledgeNodes": []}
 
     # Vector + keyword search for relevant context
-    results = await search_similar(db, body.question, user["uid"], top_k=10)
+    results = await search_similar(db, body.question, user["uid"], top_k=5)
 
     # Build rich context: include concept label as a header for each chunk
     context_chunks = []
-    for node, sim in results:
-        if node.content:
-            context_chunks.append(f"[Concept: {node.label}]\n{node.content}")
-    # Preserve relevance order (highest similarity first), deduplicate
     seen = set()
     related_concepts = []
-    for node, _ in results:
+    knowledge_nodes = []
+    for node, sim in results:
+        if node.content is not None:
+            context_chunks.append(f"[Concept: {node.label}]\n{node.content}")
         if node.label not in seen:
             seen.add(node.label)
             related_concepts.append(node.label)
-    knowledge_nodes = [str(node.id) for node, _ in results]
+        knowledge_nodes.append(str(node.id))
 
     answer = await ask_brain_llm(body.question, context_chunks, related_concepts)
 

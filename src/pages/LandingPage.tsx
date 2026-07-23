@@ -12,6 +12,7 @@ const SVG_ANIMATIONS = {
   chart: '/assets/quick-insights.svg',
   clock: '/assets/space-repetion.svg',
   brain: '/assets/ai-tutor.svg',
+  ai:'/assets/ai.svg',
 };
 
 export function LandingPage({ onGetStarted }: LandingPageProps) {
@@ -149,7 +150,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
             delay={0.65}
           />
           <FeatureCard
-            animation={SVG_ANIMATIONS.brain}
+            animation={SVG_ANIMATIONS.ai}
             title="AI Tutor"
             description="Ask questions and get explanations tailored to your knowledge level."
             delay={0.7}
