@@ -154,11 +154,12 @@ export function Insights() {
           </ResponsiveContainer>
           <div className="mt-4 bg-accent/10 border border-accent/20 rounded-lg p-4">
             <p className="text-sm text-muted-foreground">
-              {(() => {
-                if (learningPatterns.length === 0) return 'Upload knowledge to see learning pattern analysis.';
-                const best = [...learningPatterns].sort((a, b) => b.effectiveness - a.effectiveness)[0];
-                return (<>Peak effectiveness observed during <span className="text-accent font-semibold">{best.time}</span> sessions. Schedule critical reviews around that time.</>);
-              })()}
+              {learningPatterns.length === 0
+                ? 'No review data yet. Complete some reviews to see your optimal study times.'
+                : (() => {
+                    const best = [...learningPatterns].sort((a, b) => b.effectiveness - a.effectiveness)[0];
+                    return (<>Peak effectiveness observed during <span className="text-accent font-semibold">{best.time}</span> sessions. Schedule critical reviews around that time.</>);
+                  })()}
             </p>
           </div>
         </motion.div>

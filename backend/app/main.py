@@ -8,8 +8,7 @@ from sqlalchemy import text
 from app.config import settings
 from app.database import engine, Base
 from app.models import models  # noqa: F401 — registers models with Base.metadata
-from app.api import dashboard, insights, knowledge_graph, upload, study_planner, ask, memory, metrics, review
-from app.api import settings as settings_api
+from app.api import dashboard, insights, knowledge_graph, upload, study_planner, ask, memory, metrics, review, settings as settings_api, notifications
 
 
 _MIGRATION_TABLES = ("knowledge_nodes", "knowledge_edges", "review_logs", "upload_records")
@@ -90,6 +89,7 @@ app.include_router(memory.router)
 app.include_router(metrics.router)
 app.include_router(review.router)
 app.include_router(settings_api.router)
+app.include_router(notifications.router)
 
 
 @app.get("/health")

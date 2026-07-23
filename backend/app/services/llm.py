@@ -86,7 +86,7 @@ async def ask_brain_llm(question: str, context_chunks: List[str], related_concep
 
     try:
         resp = await _get_client().chat.completions.create(
-            model="openai/gpt-oss-120b",
+            model="llama-3.1-8b-instant",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
             max_tokens=2000,

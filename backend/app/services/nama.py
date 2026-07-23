@@ -15,7 +15,7 @@ from typing import List, Tuple
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.models import KnowledgeNode, KnowledgeEdge
+from app.models.models import KnowledgeNode, KnowledgeEdge, ReviewLog
 
 # Default NAMA weights
 W1_REVIEW = 0.10   # review count contribution (diminishing)
@@ -113,18 +113,33 @@ async def refresh_all_strengths(db: AsyncSession, user_id: str | None = None) ->
 
 
 async def decay_curve(db: AsyncSession, concept: str, user_id: str) -> List[dict]:
-    """Return a projected 30-day decay curve for a concept."""
+    """Return a projected 30-day decay curve for a concept using real review dates."""
     node = (await db.execute(
         select(KnowledgeNode).where(KnowledgeNode.label == concept, KnowledgeNode.user_id == user_id)
     )).scalar_one_or_none()
 
     base_strength = node.strength if node else 0.5
-    review_days = {0, 1, 3, 7, 14}  # simulated optimal review points
+
+    real_review_days = set()
+    if node:
+        logs = (await db.execute(
+            select(ReviewLog.reviewed_at).where(ReviewLog.user_id == user_id)
+        )).scalars().all()
+        first_created = node.created_at or datetime.utcnow()
+        for log in logs:
+            days_since = max(0, (log - first_created).total_seconds() / 86400)
+            if days_since <= 31:
+                real_review_days.add(int(days_since))
+
+    optimal_days = {1, 3, 7, 14, 21}
 
     points = []
     for day in range(31):
-        reviewed = day in review_days
+        is_real_review = day in real_review_days
+        is_optimal = day in optimal_days and not is_real_review
+        reviewed = is_real_review or is_optimal
+        boost = 0.12 if is_real_review else (0.08 if is_optimal else 0.0)
         decay = math.log(day + 1) / 5.0
-        strength = _clamp(base_strength - (W4_DECAY * decay) + (0.15 if reviewed else 0.0))
+        strength = _clamp(base_strength - (W4_DECAY * decay) + boost)
         points.append({"day": day, "strength": round(strength, 3), "reviewed": reviewed})
     return points

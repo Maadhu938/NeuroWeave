@@ -286,8 +286,20 @@ export interface TopBarMetrics {
   studyStreak: string;
 }
 
+export interface NotificationItem {
+  id: string;
+  title: string;
+  description: string;
+  time: string;
+  priority: 'critical' | 'high' | 'success' | 'info';
+}
+
 export function getTopBarMetrics(): Promise<TopBarMetrics> {
   return request<TopBarMetrics>('/api/metrics/topbar');
+}
+
+export function getNotifications(): Promise<{ notifications: NotificationItem[] }> {
+  return request<{ notifications: NotificationItem[] }>('/api/notifications');
 }
 
 // ── Settings ───────────────────────────────────────────────

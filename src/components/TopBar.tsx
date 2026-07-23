@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
-import { getTopBarMetrics } from '@/lib/api';
+import { getTopBarMetrics, getNotifications, type NotificationItem } from '@/lib/api';
 import { Bell, BrainCircuit, CalendarCheck, Menu, Moon, Search, Sparkles, Sun, TrendingUp, Zap } from 'lucide-react';
 
 interface TopBarProps {
@@ -10,17 +10,12 @@ interface TopBarProps {
 
 const THEME_KEY = 'neuroweave_theme';
 
-const NOTIFICATIONS = [
-  { id: '1', title: 'Review cycle due', desc: '3 concepts need review today', time: '2m ago' },
-  { id: '2', title: 'Study streak active', desc: 'You have a 5-day streak', time: '1h ago' },
-  { id: '3', title: 'New insight available', desc: 'AI generated new recommendations', time: '3h ago' },
-];
-
 export function TopBar({ onMenuToggle, onNavigate }: TopBarProps) {
   const [metrics, setMetrics] = useState({ knowledgeScore: '--', retentionRate: '--', studyStreak: '--' });
   const [isDark, setIsDark] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [aiBoosting, setAiBoosting] = useState(false);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
 
   useEffect(() => {
     const fetchMetrics = () => {
@@ -47,6 +42,12 @@ export function TopBar({ onMenuToggle, onNavigate }: TopBarProps) {
     return () => window.removeEventListener('neuroweave:themeChanged', refreshTheme);
   }, []);
 
+  useEffect(() => {
+    getNotifications()
+      .then((data) => setNotifications(data.notifications))
+      .catch(() => {});
+  }, []);
+
   const toggleTheme = () => {
     const next = isDark ? 'light' : 'dark';
     localStorage.setItem(THEME_KEY, next);
@@ -60,8 +61,9 @@ export function TopBar({ onMenuToggle, onNavigate }: TopBarProps) {
     setAiBoosting(true);
     try {
       await getTopBarMetrics().then(setMetrics).catch(() => {});
+      onNavigate?.('insights');
     } finally {
-      setTimeout(() => setAiBoosting(false), 500);
+      setTimeout(() => setAiBoosting(false), 600);
     }
   };
 
@@ -69,6 +71,13 @@ export function TopBar({ onMenuToggle, onNavigate }: TopBarProps) {
     if (e.key === 'Enter') {
       onNavigate?.('brain-map');
     }
+  };
+
+  const priorityColor: Record<string, string> = {
+    critical: 'bg-destructive',
+    high: 'bg-warning',
+    success: 'bg-success',
+    info: 'bg-primary',
   };
 
   return (
@@ -121,7 +130,7 @@ export function TopBar({ onMenuToggle, onNavigate }: TopBarProps) {
             className={`hidden md:flex items-center gap-2 rounded-xl px-4 py-2.5 font-semibold transition-all ${aiBoosting ? 'bg-success text-success-foreground shadow-lg shadow-success/25' : 'bg-primary text-primary-foreground shadow-lg shadow-sky-500/20'}`}
           >
             <Sparkles className="h-4 w-4" />
-            {aiBoosting ? 'Boosting...' : 'AI Boost'}
+            {aiBoosting ? 'Opening Insights...' : 'AI Boost'}
           </motion.button>
 
           <motion.button
@@ -143,7 +152,11 @@ export function TopBar({ onMenuToggle, onNavigate }: TopBarProps) {
               aria-label="Notifications"
             >
               <Bell className="h-5 w-5" />
-              <span className="absolute right-2.5 top-2.5 h-2 w-2 rounded-full bg-destructive" />
+              {notifications.length > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center">
+                  {notifications.length}
+                </span>
+              )}
             </motion.button>
 
             {notifOpen && (
@@ -157,15 +170,20 @@ export function TopBar({ onMenuToggle, onNavigate }: TopBarProps) {
                   <button onClick={() => setNotifOpen(false)} className="text-xs text-muted-foreground hover:text-foreground">Close</button>
                 </div>
                 <div className="max-h-80 overflow-y-auto">
-                  {NOTIFICATIONS.map(n => (
-                    <div key={n.id} className="p-3 border-b border-border last:border-b-0 hover:bg-muted/50 transition-colors cursor-pointer">
-                      <div className="flex items-center justify-between mb-0.5">
-                        <p className="text-sm font-medium text-foreground">{n.title}</p>
-                        <span className="text-[10px] text-muted-foreground whitespace-nowrap">{n.time}</span>
+                  {notifications.length === 0 ? (
+                    <p className="p-4 text-xs text-muted-foreground text-center">No notifications yet. Upload knowledge or complete reviews to see them here.</p>
+                  ) : (
+                    notifications.map((n) => (
+                      <div key={n.id} className="p-3 border-b border-border last:border-b-0 hover:bg-muted/50 transition-colors cursor-pointer">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className={`h-2 w-2 rounded-full ${priorityColor[n.priority] || 'bg-muted-foreground'}`} />
+                          <p className="text-sm font-medium text-foreground">{n.title}</p>
+                        </div>
+                        <p className="text-xs text-muted-foreground pl-4">{n.description}</p>
+                        <p className="text-[10px] text-muted-foreground mt-1 pl-4">{n.time}</p>
                       </div>
-                      <p className="text-xs text-muted-foreground">{n.desc}</p>
-                    </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </motion.div>
             )}
