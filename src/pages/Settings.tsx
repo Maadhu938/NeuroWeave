@@ -104,12 +104,17 @@ export function Settings() {
   const handleSaveProfile = async () => {
     if (!user) return;
     setSaving(true);
+    setSaved(false);
     try {
       await updateProfile(user, { displayName: displayName.trim() || null });
+      localStorage.setItem('neuroweave_display_name', displayName.trim());
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
-    } catch { /* ignore */ }
-    setSaving(false);
+    } catch (err) {
+      console.error('Failed to update profile:', err);
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleExport = async () => {

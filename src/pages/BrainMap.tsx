@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion } from 'motion/react';
 import { LottieIcon } from '@/components/AnimatedIcons';
+import { Plus, Minus } from 'lucide-react';
 import { getKnowledgeGraph, deleteKnowledgeNode, type GraphNode } from '@/lib/api';
 import { ReviewQuiz } from '@/components/ReviewQuiz';
 
@@ -348,9 +349,7 @@ export function BrainMap({ onNavigate }: BrainMapProps) {
             onClick={() => setZoom(Math.min(zoom + 0.2, 3))}
             className="p-3 glass-panel rounded-lg hover:border-primary/40 transition-all"
           >
-            <div className="w-5 h-5">
-              <LottieIcon name="search" size={20} />
-            </div>
+            <Plus className="w-5 h-5 text-foreground" />
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -358,9 +357,7 @@ export function BrainMap({ onNavigate }: BrainMapProps) {
             onClick={() => setZoom(Math.max(zoom - 0.2, 0.5))}
             className="p-3 glass-panel rounded-lg hover:border-primary/40 transition-all"
           >
-            <div className="w-5 h-5">
-              <LottieIcon name="search" size={20} />
-            </div>
+            <Minus className="w-5 h-5 text-foreground" />
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.05 }}

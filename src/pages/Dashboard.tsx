@@ -96,32 +96,24 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           icon="brain"
           title="Knowledge Score"
           value={metrics.knowledgeScore}
-          trend="up"
-          trendValue="+12%"
           color="primary"
         />
         <MetricCard
           icon="chart"
           title="Retention Rate"
           value={metrics.retentionRate}
-          trend="up"
-          trendValue="+5%"
           color="success"
         />
         <MetricCard
           icon="book"
           title="Concepts Mastered"
           value={metrics.conceptsMastered}
-          trend="up"
-          trendValue="+8"
           color="accent"
         />
         <MetricCard
           icon="clock"
           title="Study Streak"
           value={metrics.studyStreak}
-          trend="neutral"
-          trendValue=""
           color="warning"
         />
       </div>
@@ -141,7 +133,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
               </div>
               Knowledge Strength
             </h2>
-            <button className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1">
+            <button
+              onClick={() => onNavigate?.('brain-map')}
+              className="text-sm text-primary hover:text-primary/80 font-medium flex items-center gap-1"
+            >
               View Details
               <div className="w-4 h-4">
                 <LottieIcon name="arrowRight" size={16} />
@@ -171,19 +166,15 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="soft-card p-5 md:p-6"
         >
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-              <div className="w-5 h-5">
-                <LottieIcon name="chart" size={20} />
-              </div>
-              Retention Trend
-            </h2>
-            <select className="text-sm bg-muted border border-border rounded-lg px-3 py-1.5 text-foreground">
-              <option>Last 7 days</option>
-              <option>Last 30 days</option>
-              <option>Last 90 days</option>
-            </select>
-          </div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                <div className="w-5 h-5">
+                  <LottieIcon name="chart" size={20} />
+                </div>
+                Retention Trend
+              </h2>
+              <span className="text-xs text-muted-foreground bg-muted px-2.5 py-1 rounded-lg border border-border">Last 7 days</span>
+            </div>
           <ResponsiveContainer width="100%" height={250}>
             <AreaChart data={retentionData}>
               <defs>
@@ -393,8 +384,8 @@ interface MetricCardProps {
   icon: string;
   title: string;
   value: string;
-  trend: 'up' | 'down' | 'neutral';
-  trendValue: string;
+  trend?: 'up' | 'down' | 'neutral';
+  trendValue?: string;
   color: 'primary' | 'success' | 'warning' | 'accent' | 'destructive';
 }
 

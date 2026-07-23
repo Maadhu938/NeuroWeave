@@ -149,8 +149,9 @@ export function AskYourBrain() {
     }
   };
 
-  const handleQuestionClick = (question: string) => {
+  const handleQuestionClick = async (question: string) => {
     setInputValue(question);
+    await handleSendMessage();
   };
 
   return (

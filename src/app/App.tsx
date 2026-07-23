@@ -131,7 +131,7 @@ export default function App() {
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
       />
-      <TopBar onMenuToggle={() => setSidebarOpen(prev => !prev)} />
+      <TopBar onMenuToggle={() => setSidebarOpen(prev => !prev)} onNavigate={setCurrentPage} />
       <main
         className="relative md:ml-72 p-4 md:p-6 xl:p-8"
         style={{ paddingTop: 'var(--topbar-height, 96px)' }}
