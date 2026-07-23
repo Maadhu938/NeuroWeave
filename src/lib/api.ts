@@ -232,7 +232,6 @@ export function getStudyPlan(): Promise<StudyPlanData> {
 export interface AskBrainResponse {
   answer: string;
   relatedConcepts: string[];
-  knowledgeNodes: string[];
 }
 
 export function askBrain(question: string): Promise<AskBrainResponse> {

@@ -40,5 +40,4 @@ async def ask_brain(body: AskRequest, user: dict = Depends(get_current_user), db
     return {
         "answer": answer,
         "relatedConcepts": related_concepts,
-        "knowledgeNodes": knowledge_nodes,
     }

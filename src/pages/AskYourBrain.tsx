@@ -134,7 +134,6 @@ export function AskYourBrain() {
         type: 'ai',
         content: response.answer,
         relatedConcepts: response.relatedConcepts,
-        knowledgeNodes: response.knowledgeNodes,
       };
       setMessages(prev => [...prev, aiMessage]);
     } catch {
@@ -221,27 +220,6 @@ export function AskYourBrain() {
                                 className="px-2 py-1 bg-primary/15 text-primary rounded text-xs border border-primary/25"
                               >
                                 {concept}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {message.knowledgeNodes && message.knowledgeNodes.length > 0 && (
-                        <div className="mt-3 pt-3 border-t border-border">
-                          <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
-                            <div className="w-3 h-3">
-                              <LottieIcon name="book" size={12} />
-                            </div>
-                            Knowledge Nodes Referenced
-                          </p>
-                          <div className="flex flex-wrap gap-2">
-                            {message.knowledgeNodes.map((node) => (
-                              <span
-                                key={node}
-                                className="px-2 py-1 bg-accent/15 text-accent rounded text-xs border border-accent/25"
-                              >
-                                {node}
                               </span>
                             ))}
                           </div>
