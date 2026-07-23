@@ -137,3 +137,18 @@ button, a, input, textarea, select {
   0%, 100% { transform: scale(1); opacity: 1; }
   50% { transform: scale(1.05); opacity: 0.85; }
 }
+
+/* BrainMap fullscreen */
+
+:fullscreen {
+  width: 100vw;
+  height: 100vh;
+  background: var(--background);
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+:fullscreen .brain-map-fullscreen-content {
+  height: 100%;
+  overflow: auto;
+}

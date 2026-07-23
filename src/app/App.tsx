@@ -11,6 +11,8 @@ import { StudyPlanner } from '@/pages/StudyPlanner';
 import { AskYourBrain } from '@/pages/AskYourBrain';
 import { Settings } from '@/pages/Settings';
 import { NotFound } from '@/pages/NotFound';
+import { PrivacyPolicy } from '@/pages/PrivacyPolicy';
+import { CookieConsent } from '@/components/CookieConsent';
 import { useAuth } from '@/hooks/useAuth';
 
 const THEME_KEY = 'neuroweave_theme';
@@ -79,13 +81,21 @@ export default function App() {
   if (currentPage === 'landing') {
     return (
       <div className="min-h-screen min-h-[100dvh] app-surface">
-        <LandingPage onGetStarted={() => {
-          if (user) {
-            setCurrentPage('dashboard');
-          } else {
-            setCurrentPage('login');
-          }
-        }} />
+        <LandingPage 
+          onGetStarted={() => {
+            if (user) {
+              setCurrentPage('dashboard');
+            } else {
+              setCurrentPage('login');
+            }
+          }}
+          onViewDemo={() => {
+            const features = document.getElementById('landing-features');
+            if (features) {
+              features.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+        />
       </div>
     );
   }
@@ -115,6 +125,8 @@ export default function App() {
         return <AskYourBrain />;
       case 'settings':
         return <Settings />;
+      case 'privacy':
+        return <PrivacyPolicy />;
       case '404':
         return <NotFound onNavigate={setCurrentPage} />;
       default:
@@ -138,6 +150,7 @@ export default function App() {
       >
         {renderPage()}
       </main>
+      <CookieConsent onNavigate={setCurrentPage} />
     </div>
   );
 }

@@ -1,8 +1,9 @@
-import { ArrowRight, BookOpen, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
 
 interface LandingPageProps {
   onGetStarted: () => void;
+  onViewDemo?: () => void;
 }
 
 const SVG_ANIMATIONS = {
@@ -15,7 +16,13 @@ const SVG_ANIMATIONS = {
   ai:'/assets/ai.svg',
 };
 
-export function LandingPage({ onGetStarted }: LandingPageProps) {
+export function LandingPage({ onGetStarted, onViewDemo }: LandingPageProps) {
+  const featuresRef = (el: HTMLDivElement | null) => {
+    if (el && onViewDemo) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background overflow-hidden">
       {/* Subtle Background Pattern */}
@@ -104,9 +111,15 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                if (onViewDemo) {
+                  onViewDemo();
+                } else {
+                  document.getElementById('landing-features')?.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
               className="px-8 py-4 rounded-xl flex items-center gap-2 font-medium text-foreground border border-border hover:bg-muted transition-all"
             >
-              <BookOpen className="w-5 h-5" />
               View Demo
             </motion.button>
           </motion.div>
@@ -114,6 +127,8 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
 
         {/* Feature Grid with Animated SVGs */}
         <motion.div
+          ref={featuresRef}
+          id="landing-features"
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.6 }}
@@ -156,22 +171,14 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
             delay={0.7}
           />
         </motion.div>
-
-        {/* Stats Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
-          className="mt-20 pt-16 border-t border-border"
-        >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto text-center">
-            <StatItem value="10K+" label="Active Learners" />
-            <StatItem value="95%" label="Retention Rate" />
-            <StatItem value="50K+" label="Concepts Mapped" />
-            <StatItem value="4.9" label="User Rating" />
-          </div>
-        </motion.div>
       </div>
+
+      {/* Footer */}
+      <footer className="relative z-10 border-t border-border py-8">
+        <div className="container mx-auto px-4 md:px-6 text-center text-sm text-muted-foreground">
+          <p>© 2025 Neuroweave. Made with ❤️ for learners.</p>
+        </div>
+      </footer>
     </div>
   );
 }
@@ -206,16 +213,3 @@ function FeatureCard({ animation, title, description, delay }: FeatureCardProps)
   );
 }
 
-interface StatItemProps {
-  value: string;
-  label: string;
-}
-
-function StatItem({ value, label }: StatItemProps) {
-  return (
-    <div>
-      <div className="text-3xl md:text-4xl font-bold text-foreground mb-1">{value}</div>
-      <div className="text-sm text-muted-foreground">{label}</div>
-    </div>
-  );
-}

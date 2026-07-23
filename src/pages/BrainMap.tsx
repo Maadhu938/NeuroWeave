@@ -32,6 +32,8 @@ export function BrainMap({ onNavigate }: BrainMapProps) {
   const [loading, setLoading] = useState(true);
   const nodesRef = useRef<GraphNode[]>([]);
   const [reviewConcept, setReviewConcept] = useState<{ label: string; strength: number } | null>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setLoading(true);
@@ -332,6 +334,25 @@ export function BrainMap({ onNavigate }: BrainMapProps) {
     }
   };
 
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
+
+  const toggleFullscreen = useCallback(() => {
+    if (!containerRef.current) return;
+
+    if (!document.fullscreenElement) {
+      containerRef.current.requestFullscreen().catch(() => {});
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  }, []);
+
   return (
     <div className="space-y-4 md:space-y-6">
       {/* Header */}
@@ -362,11 +383,11 @@ export function BrainMap({ onNavigate }: BrainMapProps) {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }); }}
+            onClick={toggleFullscreen}
             className="p-3 glass-panel rounded-lg hover:border-primary/40 transition-all"
           >
             <div className="w-5 h-5">
-              <LottieIcon name="maximize" size={20} />
+              <LottieIcon name={isFullscreen ? 'minimize' : 'maximize'} size={20} />
             </div>
           </motion.button>
         </div>
@@ -406,11 +427,12 @@ export function BrainMap({ onNavigate }: BrainMapProps) {
         {/* Graph Canvas */}
         <div className="lg:col-span-2">
           <motion.div
+            ref={containerRef}
             initial={{ opacity: 0, scale: 0.97 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
             className="soft-card overflow-hidden relative"
-            style={{ height: 'min(600px, calc(100vh - 280px))' }}
+            style={{ height: isFullscreen ? '100vh' : 'min(600px, calc(100vh - 280px))' }}
           >
             <canvas
               ref={canvasRef}

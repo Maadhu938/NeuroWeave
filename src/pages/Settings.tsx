@@ -4,6 +4,12 @@ import { updateProfile } from 'firebase/auth';
 import { useAuth } from '@/hooks/useAuth';
 import { getKnowledgeGraph, clearUserData, getUserSettings, updateUserSettings, type UserPreferences } from '@/lib/api';
 import { LottieIcon } from '@/components/AnimatedIcons';
+import {
+  loadCookiePreferences,
+  saveCookiePreferences,
+  type CookiePreferences,
+  type ConsentChoice,
+} from '@/hooks/useCookieConsent';
 
 const PREFS_KEY = 'neuroweave_settings';
 const THEME_KEY = 'neuroweave_theme';
@@ -444,8 +450,84 @@ export function Settings() {
             </div>
           </motion.div>
         </div>
+
+        {/* Cookie Preferences */}
+        <CookiePreferencesSection />
       </div>
     </div>
+  );
+}
+
+function CookiePreferencesSection() {
+  const [prefs, setPrefs] = useState<CookiePreferences>(() => {
+    try {
+      const stored = loadCookiePreferences();
+      return stored
+        ? { essential: stored.essential, analytics: stored.analytics, preferences: stored.preferences }
+        : { essential: true, analytics: false, preferences: false };
+    } catch {
+      return { essential: true, analytics: false, preferences: false };
+    }
+  });
+
+  const handleSave = () => {
+    saveCookiePreferences(prefs, 'custom');
+  };
+
+  const handleReset = () => {
+    setPrefs({ essential: true, analytics: false, preferences: false });
+    saveCookiePreferences({ essential: true, analytics: false, preferences: false }, 'essential');
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="bg-card border border-border rounded-xl p-5 md:p-6"
+    >
+      <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+        <div className="w-5 h-5">
+          <LottieIcon name="shield" size={20} />
+        </div>
+        Cookie Preferences
+      </h2>
+      <p className="text-sm text-muted-foreground mb-4">
+        Essential cookies are always enabled. Manage optional categories below.
+      </p>
+      <div className="space-y-4">
+        <ToggleRow label="Essential" description="Authentication, security, and core app functionality." checked={prefs.essential} onChange={() => {}} disabled />
+        <ToggleRow label="Preferences" description="Remembers your theme, sidebar state, and settings." checked={prefs.preferences} onChange={(checked) => setPrefs((prev) => ({ ...prev, preferences: checked }))} />
+        <ToggleRow label="Analytics" description="Helps us understand usage and improve the learning experience." checked={prefs.analytics} onChange={(checked) => setPrefs((prev) => ({ ...prev, analytics: checked }))} />
+      </div>
+
+      <div className="mt-6 flex flex-col-reverse sm:flex-row gap-2">
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={handleReset}
+          className="px-4 py-2.5 rounded-xl border border-border text-sm font-medium text-foreground hover:bg-muted transition-colors"
+        >
+          Reject Non-Essential
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => setPrefs({ essential: true, analytics: true, preferences: true })}
+          className="px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium shadow-lg shadow-primary/25"
+        >
+          Accept All
+        </motion.button>
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={handleSave}
+          className="px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-medium shadow-lg shadow-primary/25"
+        >
+          Save Preferences
+        </motion.button>
+      </div>
+    </motion.div>
   );
 }
 
@@ -469,7 +551,7 @@ function ThemeButton({ active, onClick, icon, label }: { active: boolean; onClic
   );
 }
 
-function ToggleRow({ label, description, checked, onChange }: { label: string; description: string; checked: boolean; onChange: () => void }) {
+function ToggleRow({ label, description, checked, onChange, disabled }: { label: string; description: string; checked: boolean; onChange: (checked: boolean) => void; disabled?: boolean }) {
   return (
     <div className="flex items-center justify-between">
       <div>
@@ -477,8 +559,8 @@ function ToggleRow({ label, description, checked, onChange }: { label: string; d
         <p className="text-sm text-muted-foreground">{description}</p>
       </div>
       <label className="relative inline-flex items-center cursor-pointer">
-        <input type="checkbox" className="sr-only peer" checked={checked} onChange={onChange} />
-        <div className="w-11 h-6 bg-muted peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary border border-border"></div>
+        <input type="checkbox" className="sr-only peer" checked={checked} onChange={() => onChange(!checked)} disabled={disabled} />
+        <div className={`w-11 h-6 ${disabled ? 'bg-muted' : 'peer-focus:outline-none'} rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary border border-border`}></div>
       </label>
     </div>
   );
