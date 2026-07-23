@@ -149,7 +149,7 @@ async def extract_concepts_llm(text: str) -> List[str]:
     )
 
     messages = [{"role": "user", "content": prompt}]
-    model = "llama-3.3-70b-versatile"
+    model = "openai/gpt-oss-120b"
 
     _log_payload(model, messages, extra="extract_concepts")
 
