@@ -1,19 +1,17 @@
-import { Sparkles, ArrowRight, BookOpen, Target, Clock } from 'lucide-react';
+import { ArrowRight, BookOpen, Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 interface LandingPageProps {
   onGetStarted: () => void;
 }
 
-// Lottie Animation URLs
-const ANIMATIONS = {
-  brain: 'https://lottie.host/4b8806d3-7a1e-4d7b-9c8e-2f5a8b9c1d2e/brain.json',
-  network: 'https://lottie.host/4l8i06n3-7k1o-4n7l-9m8o-2p5k8l9m1n2o/network.json',
-  learning: 'https://lottie.host/5c9917e4-8b2f-5e8c-0d9f-3g6b9c0d2e3f/learning.json',
-  rocket: 'https://lottie.host/5m9j17o4-8l2p-5o8m-0n9p-3q6l9m0n2o3p/rocket.json',
-  chart: 'https://lottie.host/3k7h95m2-6j0n-3m6k-8l7n-1o4j7k8l0m1n/chart.json',
-  clock: 'https://lottie.host/6d0a28f5-9c3g-6f9d-1e0g-4h7c0d1e3f4g/clock.json',
+const SVG_ANIMATIONS = {
+  network: '/assets/knowledge-graph.svg',
+  learning: '/assets/memory-prediction.svg',
+  rocket: '/assets/smart-planning.svg',
+  chart: '/assets/quick-insights.svg',
+  clock: '/assets/space-repetion.svg',
+  brain: '/assets/ai-tutor.svg',
 };
 
 export function LandingPage({ onGetStarted }: LandingPageProps) {
@@ -41,20 +39,16 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
           transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
           className="text-center max-w-3xl mx-auto"
         >
-          {/* Lottie Brain Animation */}
+          {/* Animated Hero Visual */}
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.1, duration: 0.5 }}
             className="flex justify-center mb-8"
           >
-            <div className="relative w-32 h-32 md:w-40 md:h-40">
-              <DotLottieReact
-                src={ANIMATIONS.brain}
-                loop={true}
-                autoplay={true}
-                style={{ width: '100%', height: '100%' }}
-              />
+            <div className="relative w-32 h-32 md:w-40 md:h-40 flex items-center justify-center">
+              <div className="absolute inset-0 bg-primary/20 rounded-full blur-2xl animate-pulse" />
+              <img src="/assets/ai-tutor.svg" alt="AI Brain" className="relative w-full h-full object-contain" style={{ animation: 'float 3s ease-in-out infinite' }} />
             </div>
           </motion.div>
 
@@ -117,7 +111,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
           </motion.div>
         </motion.div>
 
-        {/* Feature Grid with Lottie Animations */}
+        {/* Feature Grid with Animated SVGs */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
@@ -125,37 +119,37 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-20 max-w-5xl mx-auto"
         >
           <FeatureCard
-            animation={ANIMATIONS.network}
+            animation={SVG_ANIMATIONS.network}
             title="Knowledge Graph"
             description="Visualize concepts as interconnected nodes. See how ideas relate and build upon each other."
             delay={0.45}
           />
           <FeatureCard
-            animation={ANIMATIONS.learning}
+            animation={SVG_ANIMATIONS.learning}
             title="Memory Prediction"
             description="AI algorithms predict when you'll forget and schedule reviews at optimal times."
             delay={0.5}
           />
           <FeatureCard
-            animation={ANIMATIONS.rocket}
+            animation={SVG_ANIMATIONS.rocket}
             title="Smart Planning"
             description="Get personalized study plans based on your learning patterns and goals."
             delay={0.55}
           />
           <FeatureCard
-            animation={ANIMATIONS.chart}
+            animation={SVG_ANIMATIONS.chart}
             title="Quick Insights"
             description="Instant analysis of your weak areas and personalized recommendations."
             delay={0.6}
           />
           <FeatureCard
-            animation={ANIMATIONS.clock}
+            animation={SVG_ANIMATIONS.clock}
             title="Spaced Repetition"
             description="Scientifically proven techniques to maximize long-term retention."
             delay={0.65}
           />
           <FeatureCard
-            animation={ANIMATIONS.brain}
+            animation={SVG_ANIMATIONS.brain}
             title="AI Tutor"
             description="Ask questions and get explanations tailored to your knowledge level."
             delay={0.7}
@@ -197,12 +191,12 @@ function FeatureCard({ animation, title, description, delay }: FeatureCardProps)
       whileHover={{ y: -4 }}
       className="group bg-card border border-border rounded-xl p-6 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
     >
-      <div className="w-20 h-20 mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
-        <DotLottieReact
+      <div className="w-20 h-20 mx-auto mb-4 group-hover:scale-110 transition-transform duration-300 flex items-center justify-center">
+        <img
           src={animation}
-          loop={true}
-          autoplay={true}
-          style={{ width: '100%', height: '100%' }}
+          alt={title}
+          className="w-full h-full object-contain"
+          style={{ animation: 'svgPulse 2.5s ease-in-out infinite' }}
         />
       </div>
       <h3 className="text-lg font-semibold text-foreground mb-2 text-center">{title}</h3>

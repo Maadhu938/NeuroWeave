@@ -34,7 +34,7 @@ export function MemoryDecayChart({ concept = 'Selected Concept' }: MemoryDecayCh
             Memory Strength: {(data.strength * 100).toFixed(1)}%
           </p>
           {data.reviewed && (
-            <p className="text-[#00FFA3] text-xs mt-1">✓ Reviewed</p>
+            <p className="text-[#00FFA3] text-xs mt-1">Reviewed</p>
           )}
         </div>
       );

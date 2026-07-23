@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { getTopBarMetrics, getNotifications, type NotificationItem } from '@/lib/api';
-import { Bell, BrainCircuit, CalendarCheck, Menu, Moon, Search, Sparkles, Sun, TrendingUp, Zap } from 'lucide-react';
+import { Bell, BrainCircuit, CalendarCheck, Menu, Moon, Search, Sun, TrendingUp, Zap } from 'lucide-react';
 
 interface TopBarProps {
   onMenuToggle?: () => void;
@@ -14,7 +14,6 @@ export function TopBar({ onMenuToggle, onNavigate }: TopBarProps) {
   const [metrics, setMetrics] = useState({ knowledgeScore: '--', retentionRate: '--', studyStreak: '--' });
   const [isDark, setIsDark] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
-  const [aiBoosting, setAiBoosting] = useState(false);
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
 
   useEffect(() => {
@@ -55,16 +54,6 @@ export function TopBar({ onMenuToggle, onNavigate }: TopBarProps) {
     document.documentElement.classList.add(next);
     setIsDark(next === 'dark');
     window.dispatchEvent(new Event('neuroweave:themeChanged'));
-  };
-
-  const handleAiBoost = async () => {
-    setAiBoosting(true);
-    try {
-      await getTopBarMetrics().then(setMetrics).catch(() => {});
-      onNavigate?.('insights');
-    } finally {
-      setTimeout(() => setAiBoosting(false), 600);
-    }
   };
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -121,17 +110,6 @@ export function TopBar({ onMenuToggle, onNavigate }: TopBarProps) {
           <MetricChip icon={Zap} value={metrics.knowledgeScore} />
           <MetricChip icon={TrendingUp} value={metrics.retentionRate} className="hidden sm:flex" />
           <MetricChip icon={CalendarCheck} value={metrics.studyStreak} className="hidden xl:flex" />
-
-          <motion.button
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
-            onClick={handleAiBoost}
-            disabled={aiBoosting}
-            className={`hidden md:flex items-center gap-2 rounded-xl px-4 py-2.5 font-semibold transition-all ${aiBoosting ? 'bg-success text-success-foreground shadow-lg shadow-success/25' : 'bg-primary text-primary-foreground shadow-lg shadow-sky-500/20'}`}
-          >
-            <Sparkles className="h-4 w-4" />
-            {aiBoosting ? 'Opening Insights...' : 'AI Boost'}
-          </motion.button>
 
           <motion.button
             whileHover={{ scale: 1.05 }}

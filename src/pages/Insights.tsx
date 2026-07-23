@@ -223,7 +223,7 @@ export function Insights() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-[rgba(0,0,0,0.2)] rounded-lg p-4">
-            <h4 className="text-foreground font-semibold mb-2">📚 Focus Areas</h4>
+            <h4 className="text-foreground font-semibold mb-2">Focus Areas</h4>
             <ul className="space-y-1 text-sm text-muted-foreground">
               {subjectRetention.length > 0
                 ? [...subjectRetention]
@@ -234,7 +234,7 @@ export function Insights() {
             </ul>
           </div>
           <div className="bg-[rgba(0,0,0,0.2)] rounded-lg p-4">
-            <h4 className="text-foreground font-semibold mb-2">⏰ Optimal Schedule</h4>
+            <h4 className="text-foreground font-semibold mb-2">Optimal Schedule</h4>
             <ul className="space-y-1 text-sm text-muted-foreground">
               {learningPatterns.length > 0
                 ? [...learningPatterns]

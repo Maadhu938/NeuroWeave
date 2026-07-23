@@ -388,10 +388,10 @@ export function BrainMap({ onNavigate }: BrainMapProps) {
         </div>
         <div className="ml-auto hidden md:flex items-center gap-4 text-sm text-muted-foreground">
           <span className="flex items-center gap-1.5">
-            <span className="text-primary">🖱️ Drag</span> to pan
+            <span className="text-primary">Drag</span> to pan
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="text-primary">🎡 Scroll</span> to zoom
+            <span className="text-primary">Scroll</span> to zoom
           </span>
           <span className="flex items-center gap-1.5">
             <div className="w-4 h-4">

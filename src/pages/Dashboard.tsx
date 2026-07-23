@@ -205,40 +205,41 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         </motion.div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         {/* Weak Knowledge Areas */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.15 }}
-          className="soft-card p-5 md:p-6"
+          className="soft-card p-4 md:p-6"
         >
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-              <div className="w-5 h-5">
-                <LottieIcon name="alert" size={20} />
+            <h2 className="text-base md:text-lg font-semibold text-foreground flex items-center gap-2">
+              <div className="w-4 h-4 md:w-5 md:h-5">
+                <LottieIcon name="alert" size={18} />
               </div>
               Areas to Review
             </h2>
-            <button 
+            <button
               onClick={() => onNavigate?.('brain-map')}
-              className="text-sm text-primary hover:text-primary/80 font-medium"
+              className="text-xs md:text-sm text-primary hover:text-primary/80 font-medium"
             >
               View All
             </button>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2 md:space-y-3">
             {weakAreas.length > 0 ? weakAreas.map((area, index) => (
               <motion.div
                 key={area.topic}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 + index * 0.1 }}
-                className="soft-tile p-4 hover:border-primary/30 transition-colors cursor-pointer"
+                onClick={() => onNavigate?.('brain-map')}
+                className="soft-tile p-3 md:p-4 hover:border-primary/30 transition-colors cursor-pointer"
               >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-foreground font-medium">{area.topic}</span>
-                  <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                <div className="flex items-center justify-between mb-1.5 md:mb-2">
+                  <span className="text-foreground font-medium text-sm md:text-base">{area.topic}</span>
+                  <span className={`text-[10px] md:text-xs px-1.5 py-0.5 md:px-2 md:py-1 rounded-full font-medium ${
                     area.review === 'Critical' ? 'bg-destructive/10 text-destructive' :
                     area.review === 'Urgent' ? 'bg-warning/10 text-warning' :
                     'bg-primary/10 text-primary'
@@ -246,8 +247,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                     {area.review}
                   </span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                <div className="flex items-center gap-2 md:gap-3">
+                  <div className="flex-1 h-1.5 md:h-2 bg-muted rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${area.strength}%` }}
@@ -259,15 +260,15 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                       }`}
                     />
                   </div>
-                  <span className="text-sm text-muted-foreground w-10">{area.strength}%</span>
+                  <span className="text-xs md:text-sm text-muted-foreground w-8 md:w-10">{area.strength}%</span>
                 </div>
               </motion.div>
             )) : (
-              <div className="text-center py-8 text-muted-foreground">
-                <div className="w-12 h-12 mx-auto mb-3 opacity-50">
-                  <LottieIcon name="zap" size={48} />
+              <div className="text-center py-6 md:py-8 text-muted-foreground">
+                <div className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-2 md:mb-3 opacity-50">
+                  <LottieIcon name="zap" size={40} />
                 </div>
-                <p>No weak areas detected. Great job!</p>
+                <p className="text-sm">No weak areas detected. Great job!</p>
               </div>
             )}
           </div>
@@ -278,23 +279,23 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="soft-card p-5 md:p-6"
+          className="soft-card p-4 md:p-6"
         >
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
-              <div className="w-5 h-5">
-                <LottieIcon name="calendar" size={20} />
+            <h2 className="text-base md:text-lg font-semibold text-foreground flex items-center gap-2">
+              <div className="w-4 h-4 md:w-5 md:h-5">
+                <LottieIcon name="calendar" size={18} />
               </div>
               Upcoming Reviews
             </h2>
-            <button 
+            <button
               onClick={() => onNavigate?.('planner')}
-              className="text-sm text-primary hover:text-primary/80 font-medium"
+              className="text-xs md:text-sm text-primary hover:text-primary/80 font-medium"
             >
               View Planner
             </button>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-2 md:space-y-3">
             {upcomingReviews.length > 0 ? upcomingReviews.map((review, index) => (
               <motion.div
                 key={review.concept}
@@ -302,14 +303,15 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 + index * 0.1 }}
                 whileHover={{ x: 4 }}
-                className="soft-tile p-4 cursor-pointer hover:border-primary/30 transition-all"
+                onClick={() => onNavigate?.('planner')}
+                className="soft-tile p-3 md:p-4 cursor-pointer hover:border-primary/30 transition-all"
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-foreground font-medium mb-1">{review.concept}</p>
-                    <p className="text-sm text-muted-foreground">Review in {review.time}</p>
+                    <p className="text-foreground font-medium text-sm md:text-base mb-0.5 md:mb-1">{review.concept}</p>
+                    <p className="text-xs md:text-sm text-muted-foreground">Review in {review.time}</p>
                   </div>
-                  <div className={`w-2 h-2 rounded-full ${
+                  <div className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${
                     review.priority === 'critical' ? 'bg-destructive' :
                     review.priority === 'high' ? 'bg-warning' :
                     review.priority === 'medium' ? 'bg-accent' :
@@ -318,11 +320,11 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                 </div>
               </motion.div>
             )) : (
-              <div className="text-center py-8 text-muted-foreground">
-                <div className="w-12 h-12 mx-auto mb-3 opacity-50">
-                  <LottieIcon name="calendar" size={48} />
+              <div className="text-center py-6 md:py-8 text-muted-foreground">
+                <div className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-2 md:mb-3 opacity-50">
+                  <LottieIcon name="calendar" size={40} />
                 </div>
-                <p>No upcoming reviews scheduled</p>
+                <p className="text-sm">No upcoming reviews scheduled</p>
               </div>
             )}
           </div>

@@ -255,6 +255,9 @@ async def _learning_patterns_from_logs(db: AsyncSession, user_id: str) -> list:
         .group_by(func.extract('hour', ReviewLog.reviewed_at))
     )
     rows = result.all()
+    if not rows:
+        return []
+
     # Build hour → effectiveness map
     hour_map = {}
     for row in rows:
@@ -268,10 +271,10 @@ async def _learning_patterns_from_logs(db: AsyncSession, user_id: str) -> list:
     ]
     patterns = []
     for label, hr in time_slots:
-        # Check nearby hours too (hr-1, hr, hr+1)
         scores = [hour_map[h] for h in (hr - 1, hr, hr + 1) if h in hour_map]
-        eff = round(sum(scores) / len(scores)) if scores else 50
-        patterns.append({"time": label, "effectiveness": eff})
+        eff = round(sum(scores) / len(scores)) if scores else None
+        if eff is not None:
+            patterns.append({"time": label, "effectiveness": eff})
     return patterns
 
 
