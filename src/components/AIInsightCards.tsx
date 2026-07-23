@@ -31,7 +31,7 @@ export function AIInsightCards() {
           bg: 'from-[rgba(255,77,109,0.05)] to-[rgba(255,77,109,0.1)]',
           border: 'border-[rgba(255,77,109,0.3)]',
           iconBg: 'bg-[rgba(255,77,109,0.2)]',
-          iconColor: 'text-[#FF4D6D]',
+          iconColor: 'text-destructive',
         };
       case 'success':
         return {
@@ -42,17 +42,17 @@ export function AIInsightCards() {
         };
       case 'suggestion':
         return {
-          bg: 'from-[rgba(122,92,255,0.05)] to-[rgba(122,92,255,0.1)]',
-          border: 'border-[rgba(122,92,255,0.3)]',
-          iconBg: 'bg-[rgba(122,92,255,0.2)]',
-          iconColor: 'text-[#7A5CFF]',
+          bg: 'from-accent/5 to-accent/10',
+          border: 'border-accent/25',
+          iconBg: 'bg-accent/15',
+          iconColor: 'text-accent',
         };
       default:
         return {
-          bg: 'from-[rgba(79,140,255,0.05)] to-[rgba(79,140,255,0.1)]',
-          border: 'border-[rgba(79,140,255,0.3)]',
-          iconBg: 'bg-[rgba(79,140,255,0.2)]',
-          iconColor: 'text-[#4F8CFF]',
+          bg: 'from-primary/5 to-primary/10',
+          border: 'border-primary/25',
+          iconBg: 'bg-primary/15',
+          iconColor: 'text-primary',
         };
     }
   };
@@ -75,8 +75,8 @@ export function AIInsightCards() {
                 <div className={style.iconColor}>{insight.icon}</div>
               </div>
               <div className="flex-1">
-                <h3 className="text-white font-semibold mb-1.5 text-sm">{insight.title}</h3>
-                <p className="text-[#8B92A8] text-xs leading-relaxed">{insight.description}</p>
+                <h3 className="text-foreground font-semibold mb-1.5 text-sm">{insight.title}</h3>
+                <p className="text-muted-foreground text-xs leading-relaxed">{insight.description}</p>
               </div>
             </div>
           </motion.div>

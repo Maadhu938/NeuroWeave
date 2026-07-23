@@ -50,8 +50,10 @@ async def extract_concepts_llm(text: str) -> List[str]:
         match = re.search(r'\[.*\]', raw_clean, re.DOTALL)
         if match:
             return json.loads(match.group())
-    except Exception:
-        pass
+    except Exception as e:
+        import logging
+        logging.getLogger("neuroweave.llm").error(f"LLM extract_concepts failed: {e}")
+        return []
     return []
 
 
@@ -84,14 +86,16 @@ async def ask_brain_llm(question: str, context_chunks: List[str], related_concep
 
     try:
         resp = await _get_client().chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="openai/gpt-oss-120b",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
             max_tokens=2000,
         )
         return resp.choices[0].message.content.strip()
-    except Exception:
-        return "Sorry, I couldn't generate an answer right now. Please try again later."
+    except Exception as e:
+        import logging
+        logging.getLogger("neuroweave.llm").error(f"LLM ask_brain failed: {e}")
+        return f"AI temporarily unavailable (details logged): {str(e)[:100]}"
 
 
 async def generate_insights_llm(node_summaries: str) -> List[dict]:
@@ -131,8 +135,10 @@ async def generate_insights_llm(node_summaries: str) -> List[dict]:
             results = json.loads(match.group())
             _insights_cache[summary_hash] = (now, results)
             return results
-    except Exception:
-        pass
+    except Exception as e:
+        import logging
+        logging.getLogger("neuroweave.llm").error(f"LLM insights failed: {e}")
+        return [{"title": "AI Service Error", "description": f"Check logs: {str(e)[:100]}", "type": "warning"}]
     return [{"title": "Keep Learning", "description": "Upload more knowledge to get personalised insights.", "type": "info"}]
 
 
@@ -213,8 +219,10 @@ async def generate_quiz_llm(concept: str, content: str, count: int = 5) -> List[
                     })
             if validated:
                 return validated
-    except Exception:
-        pass
+    except Exception as e:
+        import logging
+        logging.getLogger("neuroweave.llm").error(f"LLM quiz generation failed for '{concept}': {e}")
+        return [_fallback_question(concept)]
     return [_fallback_question(concept)]
 
 

@@ -16,7 +16,9 @@ HF_ENDPOINT = (
 async def _fetch_embeddings(texts: List[str]) -> List[List[float]]:
     """Call Hugging Face feature-extraction endpoint for one or more texts."""
     if not settings.hf_api_key:
-        raise RuntimeError("HF_API_KEY is not configured.")
+        import logging
+        logging.getLogger("neuroweave.embedding").warning("HF_API_KEY missing - embeddings will fail")
+        raise RuntimeError("HF_API_KEY is not configured. Add to Render env vars.")
 
     headers = {
         "Authorization": f"Bearer {settings.hf_api_key}",

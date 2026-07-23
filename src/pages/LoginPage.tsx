@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'motion/react';
-import { Mail, Lock, User, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { LottieIcon } from '@/components/AnimatedIcons';
 
 interface LoginPageProps {
   onSuccess: () => void;
@@ -60,35 +60,42 @@ export function LoginPage({ onSuccess }: LoginPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#0B0F1A] flex items-center justify-center relative overflow-hidden">
-      {/* Animated Background */}
+    <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden p-4">
+      {/* Subtle Background */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-48 md:w-96 h-48 md:h-96 bg-[#4F8CFF] rounded-full blur-[80px] md:blur-[120px] opacity-20 animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-48 md:w-96 h-48 md:h-96 bg-[#7A5CFF] rounded-full blur-[80px] md:blur-[120px] opacity-20 animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-1/2 left-1/2 w-32 md:w-64 h-32 md:h-64 bg-[#00E5FF] rounded-full blur-[60px] md:blur-[100px] opacity-10 animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
       </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-        className="relative z-10 w-full max-w-md mx-4"
+        transition={{ duration: 0.5 }}
+        className="relative z-10 w-full max-w-md"
       >
-        {/* Minimal Header */}
+        {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Neuroweave</h1>
-          <p className="text-[#8B92A8]">
-            {isSignUp ? 'Create your learning account' : 'Sign in to continue'}
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.1 }}
+            className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-primary/10 mb-4"
+          >
+            <LottieIcon name="neuroweave" size={64} />
+          </motion.div>
+          <h1 className="text-2xl font-bold text-foreground mb-2">{isSignUp ? 'Create Account' : 'Welcome Back'}</h1>
+          <p className="text-muted-foreground">
+            {isSignUp ? 'Start your learning journey today' : 'Sign in to continue learning'}
           </p>
         </div>
 
         {/* Card */}
-        <div className="bg-[#131824] border border-[rgba(79,140,255,0.2)] rounded-2xl p-5 md:p-8">
+        <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-xl shadow-black/5">
           {/* Google Sign-In */}
           <button
             onClick={handleGoogle}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 bg-[rgba(79,140,255,0.05)] border border-[rgba(79,140,255,0.2)] rounded-xl p-3 text-white hover:bg-[rgba(79,140,255,0.1)] transition-colors disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-3 bg-background border border-border rounded-xl p-3 text-foreground hover:bg-muted transition-colors disabled:opacity-50 font-medium"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />
@@ -101,9 +108,9 @@ export function LoginPage({ onSuccess }: LoginPageProps) {
 
           {/* Divider */}
           <div className="flex items-center gap-3 my-6">
-            <div className="flex-1 h-px bg-[rgba(79,140,255,0.15)]" />
-            <span className="text-sm text-[#8B92A8]">or</span>
-            <div className="flex-1 h-px bg-[rgba(79,140,255,0.15)]" />
+            <div className="flex-1 h-px bg-border" />
+            <span className="text-sm text-muted-foreground">or</span>
+            <div className="flex-1 h-px bg-border" />
           </div>
 
           {/* Form */}
@@ -114,40 +121,46 @@ export function LoginPage({ onSuccess }: LoginPageProps) {
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
               >
-                <label className="block text-sm text-[#8B92A8] mb-1.5">Display Name</label>
+                <label className="block text-sm font-medium text-foreground mb-1.5">Display Name</label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8B92A8]" />
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4">
+                    <LottieIcon name="user" size={16} />
+                  </div>
                   <input
                     type="text"
                     value={displayName}
                     onChange={e => setDisplayName(e.target.value)}
-                    placeholder="Neural Explorer"
+                    placeholder="John Doe"
                     required={isSignUp}
-                    className="w-full bg-[rgba(79,140,255,0.05)] border border-[rgba(79,140,255,0.2)] rounded-xl pl-10 pr-4 py-3 text-white placeholder:text-[#555C70] focus:outline-none focus:border-[#4F8CFF] transition-colors"
+                    className="w-full bg-background border border-border rounded-xl pl-10 pr-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                   />
                 </div>
               </motion.div>
             )}
 
             <div>
-              <label className="block text-sm text-[#8B92A8] mb-1.5">Email</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">Email</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8B92A8]" />
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4">
+                  <LottieIcon name="mail" size={16} />
+                </div>
                 <input
                   type="email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   placeholder="you@example.com"
                   required
-                  className="w-full bg-[rgba(79,140,255,0.05)] border border-[rgba(79,140,255,0.2)] rounded-xl pl-10 pr-4 py-3 text-white placeholder:text-[#555C70] focus:outline-none focus:border-[#4F8CFF] transition-colors"
+                  className="w-full bg-background border border-border rounded-xl pl-10 pr-4 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm text-[#8B92A8] mb-1.5">Password</label>
+              <label className="block text-sm font-medium text-foreground mb-1.5">Password</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8B92A8]" />
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4">
+                  <LottieIcon name="lock" size={16} />
+                </div>
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
@@ -155,23 +168,25 @@ export function LoginPage({ onSuccess }: LoginPageProps) {
                   placeholder="••••••••"
                   required
                   minLength={6}
-                  className="w-full bg-[rgba(79,140,255,0.05)] border border-[rgba(79,140,255,0.2)] rounded-xl pl-10 pr-12 py-3 text-white placeholder:text-[#555C70] focus:outline-none focus:border-[#4F8CFF] transition-colors"
+                  className="w-full bg-background border border-border rounded-xl pl-10 pr-12 py-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8B92A8] hover:text-white transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  <div className="w-4 h-4">
+                    <LottieIcon name="eye" size={16} />
+                  </div>
                 </button>
               </div>
             </div>
 
             {error && (
               <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-sm text-[#FF4D6D] bg-[rgba(255,77,109,0.1)] border border-[rgba(255,77,109,0.2)] rounded-lg px-3 py-2"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-lg px-3 py-2"
               >
                 {error}
               </motion.p>
@@ -180,25 +195,29 @@ export function LoginPage({ onSuccess }: LoginPageProps) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-[#4F8CFF] to-[#7A5CFF] text-white font-semibold rounded-xl py-3 flex items-center justify-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50"
+              className="w-full bg-primary text-primary-foreground font-medium rounded-xl py-3 flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
               {loading ? (
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <div className="w-5 h-5">
+                  <LottieIcon name="loading" size={20} />
+                </div>
               ) : (
                 <>
                   {isSignUp ? 'Create Account' : 'Sign In'}
-                  <ArrowRight className="w-4 h-4" />
+                  <div className="w-4 h-4">
+                    <LottieIcon name="arrowRight" size={16} />
+                  </div>
                 </>
               )}
             </button>
           </form>
 
           {/* Toggle */}
-          <p className="text-center text-[#8B92A8] text-sm mt-6">
+          <p className="text-center text-muted-foreground text-sm mt-6">
             {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
             <button
               onClick={() => { setIsSignUp(!isSignUp); setError(''); }}
-              className="text-[#4F8CFF] hover:text-[#7A5CFF] transition-colors font-medium"
+              className="text-primary hover:text-primary/80 transition-colors font-medium"
             >
               {isSignUp ? 'Sign In' : 'Sign Up'}
             </button>
@@ -206,8 +225,8 @@ export function LoginPage({ onSuccess }: LoginPageProps) {
         </div>
 
         {/* Footer */}
-        <p className="text-center text-[#555C70] text-xs mt-6">
-          Neuroweave · Cognitive Knowledge System
+        <p className="text-center text-muted-foreground text-xs mt-6">
+          By continuing, you agree to our Terms of Service and Privacy Policy
         </p>
       </motion.div>
     </div>

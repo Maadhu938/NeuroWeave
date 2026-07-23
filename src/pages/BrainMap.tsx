@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { motion } from 'motion/react';
-import { ZoomIn, ZoomOut, Maximize2, Info, Brain, Trash2 } from 'lucide-react';
+import { LottieIcon } from '@/components/AnimatedIcons';
 import { getKnowledgeGraph, deleteKnowledgeNode, type GraphNode } from '@/lib/api';
 import { ReviewQuiz } from '@/components/ReviewQuiz';
 
@@ -336,8 +336,8 @@ export function BrainMap({ onNavigate }: BrainMapProps) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">Knowledge Brain Map</h1>
-          <p className="text-sm text-[#8B92A8]">Interactive visualization of your knowledge network</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">Knowledge Brain Map</h1>
+          <p className="text-sm text-muted-foreground">Interactive visualization of your knowledge network</p>
         </div>
         
         {/* Controls */}
@@ -346,52 +346,60 @@ export function BrainMap({ onNavigate }: BrainMapProps) {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setZoom(Math.min(zoom + 0.2, 3))}
-            className="p-3 bg-[#131824] border border-[rgba(79,140,255,0.2)] rounded-lg hover:border-[rgba(79,140,255,0.4)] transition-all"
+            className="p-3 glass-panel rounded-lg hover:border-primary/40 transition-all"
           >
-            <ZoomIn className="w-5 h-5 text-[#4F8CFF]" />
+            <div className="w-5 h-5">
+              <LottieIcon name="search" size={20} />
+            </div>
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => setZoom(Math.max(zoom - 0.2, 0.5))}
-            className="p-3 bg-[#131824] border border-[rgba(79,140,255,0.2)] rounded-lg hover:border-[rgba(79,140,255,0.4)] transition-all"
+            className="p-3 glass-panel rounded-lg hover:border-primary/40 transition-all"
           >
-            <ZoomOut className="w-5 h-5 text-[#4F8CFF]" />
+            <div className="w-5 h-5">
+              <LottieIcon name="search" size={20} />
+            </div>
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => { setZoom(1); setPan({ x: 0, y: 0 }); }}
-            className="p-3 bg-[#131824] border border-[rgba(79,140,255,0.2)] rounded-lg hover:border-[rgba(79,140,255,0.4)] transition-all"
+            className="p-3 glass-panel rounded-lg hover:border-primary/40 transition-all"
           >
-            <Maximize2 className="w-5 h-5 text-[#4F8CFF]" />
+            <div className="w-5 h-5">
+              <LottieIcon name="maximize" size={20} />
+            </div>
           </motion.button>
         </div>
       </div>
 
       {/* Legend */}
-      <div className="flex flex-wrap items-center gap-3 md:gap-6 bg-[#131824] border border-[rgba(79,140,255,0.2)] rounded-lg p-3 md:p-4">
+      <div className="glass-panel flex flex-wrap items-center gap-3 md:gap-6 rounded-lg p-3 md:p-4">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-[#00FFA3]" />
-          <span className="text-xs md:text-sm text-[#E8EEF7]">Strong (85%+)</span>
+          <span className="text-xs md:text-sm text-foreground">Strong (85%+)</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-[#FFB800]" />
-          <span className="text-xs md:text-sm text-[#E8EEF7]">Moderate (70-84%)</span>
+          <span className="text-xs md:text-sm text-foreground">Moderate (70-84%)</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 md:w-4 md:h-4 rounded-full bg-[#FF4D6D]" />
-          <span className="text-xs md:text-sm text-[#E8EEF7]">Weak (&lt;70%)</span>
+          <span className="text-xs md:text-sm text-foreground">Weak (&lt;70%)</span>
         </div>
-        <div className="ml-auto hidden md:flex items-center gap-4 text-sm text-[#8B92A8]">
+        <div className="ml-auto hidden md:flex items-center gap-4 text-sm text-muted-foreground">
           <span className="flex items-center gap-1.5">
-            <span className="text-[#4F8CFF]">🖱️ Drag</span> to pan
+            <span className="text-primary">🖱️ Drag</span> to pan
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="text-[#4F8CFF]">🎡 Scroll</span> to zoom
+            <span className="text-primary">🎡 Scroll</span> to zoom
           </span>
           <span className="flex items-center gap-1.5">
-            <Info className="w-4 h-4" />
+            <div className="w-4 h-4">
+              <LottieIcon name="info" size={16} />
+            </div>
             Click nodes for details
           </span>
         </div>
@@ -404,7 +412,7 @@ export function BrainMap({ onNavigate }: BrainMapProps) {
             initial={{ opacity: 0, scale: 0.97 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-            className="bg-[#131824] border border-[rgba(79,140,255,0.2)] rounded-xl overflow-hidden relative"
+            className="soft-card overflow-hidden relative"
             style={{ height: 'min(600px, calc(100vh - 280px))' }}
           >
             <canvas
@@ -424,10 +432,12 @@ export function BrainMap({ onNavigate }: BrainMapProps) {
 
             {/* Loading overlay */}
             {loading && (
-              <div className="absolute inset-0 flex items-center justify-center bg-[#131824]/80">
+              <div className="absolute inset-0 flex items-center justify-center bg-background/80">
                 <div className="flex flex-col items-center gap-3">
-                  <div className="w-10 h-10 border-3 border-[#4F8CFF] border-t-transparent rounded-full animate-spin" />
-                  <span className="text-sm text-[#8B92A8]">Loading knowledge graph…</span>
+                  <div className="w-10 h-10">
+                    <LottieIcon name="loading" size={40} />
+                  </div>
+                  <span className="text-sm text-muted-foreground">Loading knowledge graph…</span>
                 </div>
               </div>
             )}
@@ -435,16 +445,18 @@ export function BrainMap({ onNavigate }: BrainMapProps) {
             {/* Empty state */}
             {!loading && nodes.length === 0 && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center text-[#8B92A8] space-y-3">
-                  <Brain className="w-16 h-16 mx-auto opacity-30" />
-                  <p className="text-lg font-medium text-[#E8EEF7]">No knowledge nodes yet</p>
+                <div className="text-center text-muted-foreground space-y-3">
+                  <div className="w-16 h-16 mx-auto opacity-30">
+                    <LottieIcon name="brain" size={64} />
+                  </div>
+                  <p className="text-lg font-medium text-foreground">No knowledge nodes yet</p>
                   <p className="text-sm max-w-xs">Upload documents to start building your knowledge graph</p>
                   {onNavigate && (
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => onNavigate('upload')}
-                      className="mt-2 px-5 py-2 bg-gradient-to-r from-[#4F8CFF] to-[#7A5CFF] text-white rounded-lg text-sm"
+                      className="mt-2 px-5 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg text-sm"
                     >
                       Upload Knowledge
                     </motion.button>
@@ -461,17 +473,17 @@ export function BrainMap({ onNavigate }: BrainMapProps) {
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="bg-[#131824] border border-[rgba(79,140,255,0.2)] rounded-xl p-6 space-y-4"
+              className="soft-card p-6 space-y-4"
             >
               <div>
-                <h3 className="text-2xl font-bold text-white mb-2">{selectedNode.label}</h3>
-                <span className="inline-block px-3 py-1 bg-[rgba(79,140,255,0.2)] text-[#4F8CFF] rounded-full text-sm">
+                <h3 className="text-2xl font-bold text-foreground mb-2">{selectedNode.label}</h3>
+                <span className="inline-block px-3 py-1 bg-primary/15 text-primary rounded-full text-sm">
                   {selectedNode.category}
                 </span>
               </div>
 
               <div>
-                <p className="text-sm text-[#8B92A8] mb-2">Memory Strength</p>
+                <p className="text-sm text-muted-foreground mb-2">Memory Strength</p>
                 <div className="flex items-center gap-3">
                   <div className="flex-1 h-3 bg-[rgba(255,255,255,0.1)] rounded-full overflow-hidden">
                     <motion.div
@@ -483,24 +495,24 @@ export function BrainMap({ onNavigate }: BrainMapProps) {
                       }}
                     />
                   </div>
-                  <span className="text-lg font-bold text-white">{selectedNode.strength}%</span>
+                  <span className="text-lg font-bold text-foreground">{selectedNode.strength}%</span>
                 </div>
               </div>
 
               <div>
-                <p className="text-sm text-[#8B92A8] mb-2">Status</p>
-                <div className="text-sm text-[#E8EEF7] bg-[rgba(79,140,255,0.05)] rounded px-3 py-2">
+                <p className="text-sm text-muted-foreground mb-2">Status</p>
+                <div className="text-sm text-foreground bg-primary/5 rounded px-3 py-2">
                   {selectedNode.status}
                 </div>
               </div>
 
               <div>
-                <p className="text-sm text-[#8B92A8] mb-2">Related Concepts</p>
+                <p className="text-sm text-muted-foreground mb-2">Related Concepts</p>
                 <div className="flex flex-wrap gap-2">
                   {selectedNode.relatedConcepts.map((concept, index) => (
                     <span
                       key={index}
-                      className="px-3 py-1 bg-[rgba(122,92,255,0.2)] text-[#7A5CFF] rounded-lg text-sm border border-[rgba(122,92,255,0.3)]"
+                      className="px-3 py-1 bg-accent/15 text-accent rounded-lg text-sm border border-accent/25"
                     >
                       {concept}
                     </span>
@@ -512,7 +524,7 @@ export function BrainMap({ onNavigate }: BrainMapProps) {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setReviewConcept({ label: selectedNode.label, strength: selectedNode.strength })}
-                className="w-full bg-gradient-to-r from-[#4F8CFF] to-[#7A5CFF] text-white py-3 rounded-lg"
+                className="w-full bg-gradient-to-r from-primary to-accent text-white py-3 rounded-lg"
               >
                 Review This Concept
               </motion.button>
@@ -530,15 +542,19 @@ export function BrainMap({ onNavigate }: BrainMapProps) {
                     setNodes(data.nodes || []);
                   } catch { /* ignore */ }
                 }}
-                className="w-full border border-[rgba(255,77,109,0.3)] text-[#FF4D6D] py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-[rgba(255,77,109,0.1)] transition-colors"
+                className="w-full border border-[rgba(255,77,109,0.3)] text-destructive py-3 rounded-lg flex items-center justify-center gap-2 hover:bg-[rgba(255,77,109,0.1)] transition-colors"
               >
-                <Trash2 className="w-4 h-4" /> Delete Concept
+                <div className="w-4 h-4">
+                  <LottieIcon name="trash" size={16} />
+                </div> Delete Concept
               </motion.button>
             </motion.div>
           ) : (
-            <div className="bg-[#131824] border border-[rgba(79,140,255,0.2)] rounded-xl p-6 h-full flex items-center justify-center">
-              <div className="text-center text-[#8B92A8]">
-                <Info className="w-12 h-12 mx-auto mb-3 opacity-50" />
+            <div className="soft-card p-6 h-full flex items-center justify-center">
+              <div className="text-center text-muted-foreground">
+                <div className="w-12 h-12 mx-auto mb-3 opacity-50">
+                  <LottieIcon name="info" size={48} />
+                </div>
                 <p>Click on a node to view concept details</p>
               </div>
             </div>

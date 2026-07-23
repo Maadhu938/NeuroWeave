@@ -2,87 +2,119 @@
 
 :root {
   --font-size: 16px;
-  --background: #0B0F1A;
-  --foreground: #E8EEF7;
-  --card: #131824;
-  --card-foreground: #E8EEF7;
-  --popover: #131824;
-  --popover-foreground: #E8EEF7;
-  --primary: #4F8CFF;
+
+  --background: #eef5fb;
+  --foreground: #102033;
+  --card: rgba(255, 255, 255, 0.78);
+  --card-foreground: #102033;
+  --popover: rgba(255, 255, 255, 0.92);
+  --popover-foreground: #102033;
+
+  --primary: #0ea5e9;
   --primary-foreground: #ffffff;
-  --secondary: #7A5CFF;
-  --secondary-foreground: #ffffff;
-  --muted: #1A202E;
-  --muted-foreground: #8B92A8;
-  --accent: #00E5FF;
-  --accent-foreground: #0B0F1A;
-  --destructive: #FF4D6D;
+  --secondary: #dff4ff;
+  --secondary-foreground: #17415b;
+  --muted: #edf6fb;
+  --muted-foreground: #687789;
+  --accent: #18c7bd;
+  --accent-foreground: #052f32;
+  --destructive: #f43f5e;
   --destructive-foreground: #ffffff;
-  --border: rgba(79, 140, 255, 0.15);
-  --input: rgba(79, 140, 255, 0.1);
-  --input-background: #151B28;
-  --switch-background: #1A202E;
-  --font-weight-medium: 600;
-  --font-weight-normal: 400;
-  --ring: #4F8CFF;
-  --chart-1: #4F8CFF;
-  --chart-2: #7A5CFF;
-  --chart-3: #00E5FF;
-  --chart-4: #00FFA3;
-  --chart-5: #FF6B9D;
-  --radius: 0.75rem;
-  --sidebar: #0D1117;
-  --sidebar-foreground: #E8EEF7;
-  --sidebar-primary: #4F8CFF;
+
+  --border: rgba(121, 149, 170, 0.28);
+  --input: rgba(121, 149, 170, 0.3);
+  --input-background: rgba(255, 255, 255, 0.72);
+  --switch-background: #cfe7f2;
+  --ring: #0ea5e9;
+
+  --chart-1: #0ea5e9;
+  --chart-2: #18c7bd;
+  --chart-3: #f472b6;
+  --chart-4: #22c55e;
+  --chart-5: #f59e0b;
+
+  --radius: 0.875rem;
+  --sidebar: rgba(255, 255, 255, 0.84);
+  --sidebar-foreground: #102033;
+  --sidebar-primary: #0ea5e9;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #151B28;
-  --sidebar-accent-foreground: #E8EEF7;
-  --sidebar-border: rgba(79, 140, 255, 0.1);
-  --sidebar-ring: #4F8CFF;
-  --neural-dark: #0B0F1A;
-  --electric-blue: #4F8CFF;
-  --neon-purple: #7A5CFF;
-  --cyan-glow: #00E5FF;
-  --success-green: #00FFA3;
-  --warning-yellow: #FFB800;
-  --danger-red: #FF4D6D;
+  --sidebar-accent: rgba(14, 165, 233, 0.12);
+  --sidebar-accent-foreground: #075985;
+  --sidebar-border: rgba(121, 149, 170, 0.24);
+  --sidebar-ring: #0ea5e9;
+
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --danger: #f43f5e;
+  --info: #0ea5e9;
+
+  --surface-solid: #ffffff;
+  --surface-soft: rgba(255, 255, 255, 0.58);
+  --glass: rgba(255, 255, 255, 0.66);
+  --glass-strong: rgba(255, 255, 255, 0.82);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --app-grid: rgba(14, 42, 65, 0.07);
+  --nav-band: #12063c;
+  --shadow-sm: 0 1px 2px rgb(15 23 42 / 0.05);
+  --shadow: 0 12px 40px rgb(15 23 42 / 0.08);
+  --shadow-lg: 0 22px 70px rgb(15 23 42 / 0.13);
 }
 
 .dark {
-  --background: #0B0F1A;
-  --foreground: #E8EEF7;
-  --card: #131824;
-  --card-foreground: #E8EEF7;
-  --popover: #131824;
-  --popover-foreground: #E8EEF7;
-  --primary: #4F8CFF;
-  --primary-foreground: #ffffff;
-  --secondary: #7A5CFF;
-  --secondary-foreground: #ffffff;
-  --muted: #1A202E;
-  --muted-foreground: #8B92A8;
-  --accent: #00E5FF;
-  --accent-foreground: #0B0F1A;
-  --destructive: #FF4D6D;
+  --background: #101318;
+  --foreground: #f3f7fb;
+  --card: rgba(24, 29, 38, 0.74);
+  --card-foreground: #f3f7fb;
+  --popover: rgba(24, 29, 38, 0.92);
+  --popover-foreground: #f3f7fb;
+
+  --primary: #38bdf8;
+  --primary-foreground: #06131c;
+  --secondary: #26333d;
+  --secondary-foreground: #dcecf5;
+  --muted: #1b242d;
+  --muted-foreground: #9aa9b5;
+  --accent: #2dd4bf;
+  --accent-foreground: #042f2e;
+  --destructive: #fb7185;
   --destructive-foreground: #ffffff;
-  --border: rgba(79, 140, 255, 0.15);
-  --input: rgba(79, 140, 255, 0.1);
-  --ring: #4F8CFF;
-  --font-weight-medium: 600;
-  --font-weight-normal: 400;
-  --chart-1: #4F8CFF;
-  --chart-2: #7A5CFF;
-  --chart-3: #00E5FF;
-  --chart-4: #00FFA3;
-  --chart-5: #FF6B9D;
-  --sidebar: #0D1117;
-  --sidebar-foreground: #E8EEF7;
-  --sidebar-primary: #4F8CFF;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #151B28;
-  --sidebar-accent-foreground: #E8EEF7;
-  --sidebar-border: rgba(79, 140, 255, 0.1);
-  --sidebar-ring: #4F8CFF;
+
+  --border: rgba(226, 240, 248, 0.14);
+  --input: rgba(226, 240, 248, 0.16);
+  --input-background: rgba(20, 25, 33, 0.72);
+  --switch-background: #303b45;
+  --ring: #38bdf8;
+
+  --chart-1: #38bdf8;
+  --chart-2: #2dd4bf;
+  --chart-3: #fb7185;
+  --chart-4: #34d399;
+  --chart-5: #fbbf24;
+
+  --sidebar: rgba(18, 22, 29, 0.84);
+  --sidebar-foreground: #f3f7fb;
+  --sidebar-primary: #38bdf8;
+  --sidebar-primary-foreground: #06131c;
+  --sidebar-accent: rgba(56, 189, 248, 0.14);
+  --sidebar-accent-foreground: #bae6fd;
+  --sidebar-border: rgba(226, 240, 248, 0.12);
+  --sidebar-ring: #38bdf8;
+
+  --success: #34d399;
+  --warning: #fbbf24;
+  --danger: #fb7185;
+  --info: #38bdf8;
+
+  --surface-solid: #181d26;
+  --surface-soft: rgba(24, 29, 38, 0.56);
+  --glass: rgba(18, 22, 29, 0.58);
+  --glass-strong: rgba(18, 22, 29, 0.78);
+  --glass-border: rgba(226, 240, 248, 0.12);
+  --app-grid: rgba(226, 240, 248, 0.06);
+  --nav-band: #12063c;
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.16);
+  --shadow: 0 16px 44px rgb(0 0 0 / 0.24);
+  --shadow-lg: 0 28px 80px rgb(0 0 0 / 0.34);
 }
 
 @theme inline {
@@ -112,10 +144,10 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-lg: calc(var(--radius) - 2px);
+  --radius-xl: var(--radius);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -131,58 +163,72 @@
     @apply border-border outline-ring/50;
   }
 
-  body {
-    @apply bg-background text-foreground;
-  }
-
-  /**
-  * Default typography styles for HTML elements (h1-h4, p, label, button, input).
-  * These are in @layer base, so Tailwind utility classes (like text-sm, text-lg) automatically override them.
-  */
-
   html {
     font-size: var(--font-size);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
   }
 
   h1 {
-    font-size: var(--text-2xl);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.14;
   }
 
   h2 {
-    font-size: var(--text-xl);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.2;
   }
 
   h3 {
-    font-size: var(--text-lg);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    font-size: 1.25rem;
+    font-weight: 650;
+    line-height: 1.3;
   }
 
-  h4 {
-    font-size: var(--text-base);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+  label,
+  button,
+  input,
+  textarea,
+  select {
+    font-size: 0.875rem;
   }
+}
 
-  label {
-    font-size: var(--text-base);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-  }
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
 
-  button {
-    font-size: var(--text-base);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.5;
-  }
+::-webkit-scrollbar-track {
+  background: transparent;
+}
 
-  input {
-    font-size: var(--text-base);
-    font-weight: var(--font-weight-normal);
-    line-height: 1.5;
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--muted-foreground) 38%, transparent);
+  border-radius: 999px;
+}
+
+::selection {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

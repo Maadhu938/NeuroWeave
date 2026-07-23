@@ -1,6 +1,7 @@
-import { Brain, LayoutDashboard, Network, Upload, TrendingUp, MessageSquare, Calendar, Settings, LogOut, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '@/hooks/useAuth';
+import { LottieIcon } from './AnimatedIcons';
+import { BarChart3, BookOpenCheck, CalendarDays, LayoutDashboard, LogOut, MessageCircleQuestion, Network, Settings, UploadCloud, X } from 'lucide-react';
 
 interface SidebarProps {
   currentPage: string;
@@ -9,18 +10,18 @@ interface SidebarProps {
   onClose?: () => void;
 }
 
+const navItems = [
+  { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+  { id: 'brain-map', icon: Network, label: 'Brain Map' },
+  { id: 'upload', icon: UploadCloud, label: 'Upload Knowledge' },
+  { id: 'insights', icon: BarChart3, label: 'Insights' },
+  { id: 'planner', icon: CalendarDays, label: 'Study Planner' },
+  { id: 'ask', icon: MessageCircleQuestion, label: 'Ask Your Brain' },
+  { id: 'settings', icon: Settings, label: 'Settings' },
+];
+
 export function Sidebar({ currentPage, onNavigate, open, onClose }: SidebarProps) {
   const { user, signOut } = useAuth();
-
-  const navItems = [
-    { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { id: 'brain-map', icon: Network, label: 'Brain Map' },
-    { id: 'upload', icon: Upload, label: 'Upload Knowledge' },
-    { id: 'insights', icon: TrendingUp, label: 'Insights' },
-    { id: 'planner', icon: Calendar, label: 'Study Planner' },
-    { id: 'ask', icon: MessageSquare, label: 'Ask Your Brain' },
-    { id: 'settings', icon: Settings, label: 'Settings' },
-  ];
 
   const handleNav = (page: string) => {
     onNavigate(page);
@@ -29,50 +30,49 @@ export function Sidebar({ currentPage, onNavigate, open, onClose }: SidebarProps
 
   const sidebarContent = (
     <>
-      {/* Logo */}
-      <div className="p-5 md:p-6 border-b border-[rgba(79,140,255,0.1)] flex items-center justify-between">
+      <div className="p-5 md:p-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="relative">
-            <Brain className="w-7 h-7 md:w-8 md:h-8 text-[#4F8CFF]" />
-            <div className="absolute inset-0 blur-lg bg-[#4F8CFF] opacity-50 animate-pulse" />
+            <div className="relative grid h-12 w-12 place-items-center rounded-2xl bg-primary/15 ring-1 ring-primary/20">
+            <LottieIcon name="neuroweave" size={36} />
           </div>
           <div>
-            <h1 className="text-lg md:text-xl font-bold text-white">Neuroweave</h1>
-            <p className="text-xs text-[#8B92A8]">Intelligence System</p>
+            <h1 className="text-xl font-bold text-sidebar-foreground">Neuroweave</h1>
+            <p className="text-xs text-muted-foreground">AI learning desk</p>
           </div>
         </div>
-        {/* Close button on mobile */}
-        <button onClick={onClose} className="md:hidden p-1.5 rounded-lg text-[#8B92A8] hover:text-white hover:bg-[rgba(79,140,255,0.1)] transition-colors">
-          <X className="w-5 h-5" />
+        <button onClick={onClose} className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors" aria-label="Close menu">
+          <X className="h-5 w-5" />
         </button>
       </div>
 
-      {/* Navigation */}
-      <nav className="flex-1 p-3 md:p-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-4 pb-4 space-y-1 overflow-y-auto">
+        <p className="px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Workspace</p>
         {navItems.map((item) => {
-          const Icon = item.icon;
           const isActive = currentPage === item.id;
+          const Icon = item.icon;
           
           return (
             <motion.button
               key={item.id}
               onClick={() => handleNav(item.id)}
-              whileHover={{ scale: 1.02, x: 4 }}
+              whileHover={{ x: 2 }}
               whileTap={{ scale: 0.98 }}
               className={`
-                w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all
+                group w-full flex items-center gap-3 px-4 py-3 rounded-[1.35rem] transition-all duration-200
                 ${isActive 
-                  ? 'bg-[rgba(79,140,255,0.15)] text-[#4F8CFF] shadow-[0_0_20px_rgba(79,140,255,0.3)]' 
-                  : 'text-[#8B92A8] hover:bg-[rgba(79,140,255,0.05)] hover:text-[#E8EEF7]'
+                  ? 'bg-primary/15 text-primary font-semibold shadow-sm ring-1 ring-primary/10' 
+                  : 'text-muted-foreground hover:bg-muted/75 hover:text-foreground'
                 }
               `}
             >
-              <Icon className="w-5 h-5" />
+              <div className={`grid h-8 w-8 shrink-0 place-items-center rounded-xl transition-colors ${isActive ? 'bg-primary text-primary-foreground' : 'bg-muted/70 text-muted-foreground group-hover:text-foreground'}`}>
+                <Icon className="h-[18px] w-[18px]" />
+              </div>
               <span className="text-sm">{item.label}</span>
               {isActive && (
                 <motion.div
                   layoutId="activeIndicator"
-                  className="ml-auto w-1 h-6 bg-[#4F8CFF] rounded-full shadow-[0_0_10px_rgba(79,140,255,0.8)]"
+                  className="ml-auto h-2 w-2 rounded-full bg-primary"
                 />
               )}
             </motion.button>
@@ -80,35 +80,34 @@ export function Sidebar({ currentPage, onNavigate, open, onClose }: SidebarProps
         })}
       </nav>
 
-      {/* User & Logout */}
-      <div className="p-3 md:p-4 border-t border-[rgba(79,140,255,0.1)] space-y-3">
+      <div className="p-4 space-y-3">
+        <div className="soft-tile p-4">
+          <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+            <BookOpenCheck className="h-4 w-4 text-primary" />
+            Review Ready
+          </div>
+          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">Your study space is synced and ready.</p>
+        </div>
         {user && (
-          <div className="flex items-center gap-3 px-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#4F8CFF] to-[#7A5CFF] flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
-              {(user.displayName || user.email || '?')[0].toUpperCase()}
+          <div className="flex items-center gap-3 rounded-xl px-2 py-2">
+            <div className="grid h-9 w-9 place-items-center rounded-full bg-primary/12">
+              <LottieIcon name="user" size={32} />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-white truncate">{user.displayName || 'Explorer'}</p>
-              <p className="text-xs text-[#8B92A8] truncate">{user.email}</p>
+              <p className="text-sm text-foreground font-medium truncate">{user.displayName || 'Explorer'}</p>
+              <p className="text-xs text-muted-foreground truncate">{user.email}</p>
             </div>
           </div>
         )}
         <motion.button
-          whileHover={{ scale: 1.02, x: 4 }}
+          whileHover={{ x: 2 }}
           whileTap={{ scale: 0.98 }}
           onClick={async () => { await signOut(); onNavigate('landing'); onClose?.(); }}
-          className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-[#8B92A8] hover:bg-[rgba(255,77,109,0.1)] hover:text-[#FF4D6D] transition-all"
+          className="w-full flex items-center gap-3 rounded-xl px-3 py-2.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
         >
-          <LogOut className="w-4 h-4" />
+          <LogOut className="h-[18px] w-[18px]" />
           <span className="text-sm">Sign Out</span>
         </motion.button>
-        <div className="bg-gradient-to-r from-[rgba(79,140,255,0.1)] to-[rgba(122,92,255,0.1)] rounded-lg p-3 border border-[rgba(79,140,255,0.2)]">
-          <div className="flex items-center gap-2 mb-1">
-            <div className="w-2 h-2 bg-[#00FFA3] rounded-full animate-pulse" />
-            <span className="text-xs text-[#E8EEF7]">Neural Network Active</span>
-          </div>
-          <p className="text-xs text-[#8B92A8]">All systems operational</p>
-        </div>
       </div>
     </>
   );
@@ -120,7 +119,7 @@ export function Sidebar({ currentPage, onNavigate, open, onClose }: SidebarProps
         initial={{ x: -20, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-        className="hidden md:flex w-64 h-screen bg-[#0D1117] border-r border-[rgba(79,140,255,0.1)] flex-col fixed left-0 top-0 z-30"
+        className="hidden md:flex w-72 h-screen glass-panel border-r border-sidebar-border flex-col fixed left-0 top-0 z-30"
       >
         {sidebarContent}
       </motion.aside>
@@ -135,14 +134,14 @@ export function Sidebar({ currentPage, onNavigate, open, onClose }: SidebarProps
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={onClose}
-              className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+              className="md:hidden fixed inset-0 bg-black/40 backdrop-blur-sm z-50"
             />
             <motion.aside
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="md:hidden fixed left-0 top-0 bottom-0 w-72 bg-[#0D1117] border-r border-[rgba(79,140,255,0.1)] flex flex-col z-50"
+              className="md:hidden fixed left-0 top-0 bottom-0 w-72 glass-panel-strong border-r border-sidebar-border flex flex-col z-50"
             >
               {sidebarContent}
             </motion.aside>

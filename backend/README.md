@@ -31,10 +31,7 @@ app/
     └── planner.py       # Study schedule generation
 ```
 
-## Quick Start
 
-```bash
-# 1. Create virtual environment
 python -m venv venv
 venv\Scripts\activate          # Windows
 # source venv/bin/activate    # macOS/Linux

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Send, Brain, Sparkles, Link2, BookOpen } from 'lucide-react';
+import { LottieIcon } from '@/components/AnimatedIcons';
+import { HelpCircle } from 'lucide-react';
 import { askBrain, getKnowledgeGraph } from '@/lib/api';
 import ReactMarkdown from 'react-markdown';
 
@@ -21,28 +22,30 @@ function TypingIndicator() {
       transition={{ type: 'spring', stiffness: 300, damping: 24 }}
       className="flex justify-start"
     >
-      <div className="max-w-[80%] rounded-xl p-4 bg-[rgba(79,140,255,0.1)] border border-[rgba(79,140,255,0.2)]">
+      <div className="max-w-[80%] rounded-xl p-4 bg-primary/10 border border-border">
         <div className="flex items-center gap-2 mb-2">
-          <Brain className="w-4 h-4 text-[#4F8CFF]" />
-          <span className="text-sm text-[#4F8CFF] font-semibold">AI Assistant</span>
+          <div className="w-4 h-4">
+            <LottieIcon name="brain" size={16} />
+          </div>
+          <span className="text-sm text-primary font-semibold">AI Assistant</span>
         </div>
         <div className="flex items-center gap-1.5">
           <motion.span
-            className="w-2 h-2 rounded-full bg-[#4F8CFF]"
+            className="w-2 h-2 rounded-full bg-primary"
             animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1, 0.8] }}
             transition={{ duration: 1.2, repeat: Infinity, delay: 0 }}
           />
           <motion.span
-            className="w-2 h-2 rounded-full bg-[#4F8CFF]"
+            className="w-2 h-2 rounded-full bg-primary"
             animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1, 0.8] }}
             transition={{ duration: 1.2, repeat: Infinity, delay: 0.2 }}
           />
           <motion.span
-            className="w-2 h-2 rounded-full bg-[#4F8CFF]"
+            className="w-2 h-2 rounded-full bg-primary"
             animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1, 0.8] }}
             transition={{ duration: 1.2, repeat: Infinity, delay: 0.4 }}
           />
-          <span className="text-xs text-[#8B92A8] ml-2">Thinking...</span>
+          <span className="text-xs text-muted-foreground ml-2">Thinking...</span>
         </div>
       </div>
     </motion.div>
@@ -154,8 +157,8 @@ export function AskYourBrain() {
     <div className="flex flex-col h-[calc(100vh-7rem)] md:h-[calc(100vh-6rem)] overflow-hidden">
       {/* Header */}
       <div className="flex-shrink-0 mb-4">
-        <h1 className="text-2xl md:text-3xl font-bold text-white mb-1">Ask Your Brain</h1>
-        <p className="text-sm text-[#8B92A8]">Query your knowledge base with AI-powered answers</p>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">Ask Your Brain</h1>
+        <p className="text-sm text-muted-foreground">Query your knowledge base with AI-powered answers</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 flex-1 min-h-0">
@@ -165,7 +168,7 @@ export function AskYourBrain() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-            className="bg-[#131824] border border-[rgba(79,140,255,0.2)] rounded-xl overflow-hidden flex flex-col flex-1 min-h-0"
+            className="soft-card overflow-hidden flex flex-col flex-1 min-h-0"
           >
             {/* Messages */}
             <div className="flex-1 overflow-y-auto overscroll-contain p-4 md:p-6 space-y-4 scroll-smooth">
@@ -182,18 +185,20 @@ export function AskYourBrain() {
                     <div
                       className={`max-w-[80%] rounded-xl p-4 ${
                         message.type === 'user'
-                          ? 'bg-gradient-to-r from-[#4F8CFF] to-[#7A5CFF] text-white'
-                          : 'bg-[rgba(79,140,255,0.1)] border border-[rgba(79,140,255,0.2)] text-[#E8EEF7]'
+                          ? 'bg-gradient-to-r from-primary to-accent text-white'
+                          : 'bg-primary/10 border border-border text-foreground'
                       }`}
                     >
                       {message.type === 'ai' && (
                         <div className="flex items-center gap-2 mb-2">
-                          <Brain className="w-4 h-4 text-[#4F8CFF]" />
-                          <span className="text-sm text-[#4F8CFF] font-semibold">AI Assistant</span>
+                          <div className="w-4 h-4">
+                            <LottieIcon name="brain" size={16} />
+                          </div>
+                          <span className="text-sm text-primary font-semibold">AI Assistant</span>
                         </div>
                       )}
                       {message.type === 'ai' ? (
-                        <div className="text-sm leading-relaxed prose prose-invert prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-headings:text-[#E8EEF7] prose-strong:text-white prose-code:text-[#4F8CFF] prose-code:bg-[rgba(79,140,255,0.15)] prose-code:px-1 prose-code:py-0.5 prose-code:rounded">
+                        <div className="text-sm leading-relaxed prose prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-ol:my-1 prose-li:my-0.5 prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground prose-code:text-primary prose-code:bg-primary/15 prose-code:px-1 prose-code:py-0.5 prose-code:rounded">
                           <ReactMarkdown>{message.content}</ReactMarkdown>
                         </div>
                       ) : (
@@ -201,16 +206,18 @@ export function AskYourBrain() {
                       )}
                       
                       {message.relatedConcepts && message.relatedConcepts.length > 0 && (
-                        <div className="mt-3 pt-3 border-t border-[rgba(79,140,255,0.2)]">
-                          <p className="text-xs text-[#8B92A8] mb-2 flex items-center gap-1">
-                            <Link2 className="w-3 h-3" />
+                        <div className="mt-3 pt-3 border-t border-border">
+                          <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+                            <div className="w-3 h-3">
+                              <LottieIcon name="link" size={12} />
+                            </div>
                             Related Concepts
                           </p>
                           <div className="flex flex-wrap gap-2">
                             {message.relatedConcepts.map((concept) => (
                               <span
                                 key={concept}
-                                className="px-2 py-1 bg-[rgba(79,140,255,0.2)] text-[#4F8CFF] rounded text-xs border border-[rgba(79,140,255,0.3)]"
+                                className="px-2 py-1 bg-primary/15 text-primary rounded text-xs border border-primary/25"
                               >
                                 {concept}
                               </span>
@@ -220,16 +227,18 @@ export function AskYourBrain() {
                       )}
 
                       {message.knowledgeNodes && message.knowledgeNodes.length > 0 && (
-                        <div className="mt-3 pt-3 border-t border-[rgba(79,140,255,0.2)]">
-                          <p className="text-xs text-[#8B92A8] mb-2 flex items-center gap-1">
-                            <BookOpen className="w-3 h-3" />
+                        <div className="mt-3 pt-3 border-t border-border">
+                          <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+                            <div className="w-3 h-3">
+                              <LottieIcon name="book" size={12} />
+                            </div>
                             Knowledge Nodes Referenced
                           </p>
                           <div className="flex flex-wrap gap-2">
                             {message.knowledgeNodes.map((node) => (
                               <span
                                 key={node}
-                                className="px-2 py-1 bg-[rgba(122,92,255,0.2)] text-[#7A5CFF] rounded text-xs border border-[rgba(122,92,255,0.3)]"
+                                className="px-2 py-1 bg-accent/15 text-accent rounded text-xs border border-accent/25"
                               >
                                 {node}
                               </span>
@@ -248,7 +257,7 @@ export function AskYourBrain() {
             </div>
 
             {/* Input Area */}
-            <div className="border-t border-[rgba(79,140,255,0.2)] p-3 md:p-4 flex-shrink-0">
+            <div className="border-t border-border p-3 md:p-4 flex-shrink-0">
               <div className="flex items-end gap-2 md:gap-3">
                 <textarea
                   value={inputValue}
@@ -260,16 +269,18 @@ export function AskYourBrain() {
                     }
                   }}
                   placeholder="Ask about your knowledge..."
-                  className="flex-1 bg-[rgba(79,140,255,0.05)] border border-[rgba(79,140,255,0.2)] rounded-lg p-3 text-white placeholder-[#8B92A8] focus:outline-none focus:border-[#4F8CFF] resize-none transition-colors duration-200"
+                  className="flex-1 bg-primary/5 border border-border rounded-lg p-3 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary resize-none transition-colors duration-200"
                   rows={2}
                 />
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={handleSendMessage}
-                  className="p-3 bg-gradient-to-r from-[#4F8CFF] to-[#7A5CFF] text-white rounded-lg"
+                  className="p-3 bg-gradient-to-r from-primary to-accent text-white rounded-lg"
                 >
-                  <Send className="w-5 h-5" />
+                  <div className="w-5 h-5">
+                    <LottieIcon name="arrowRight" size={20} />
+                  </div>
                 </motion.button>
               </div>
             </div>
@@ -282,10 +293,12 @@ export function AskYourBrain() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.1 }}
-            className="bg-[#131824] border border-[rgba(79,140,255,0.2)] rounded-xl p-5"
+            className="soft-card p-5"
           >
-            <h2 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-[#FFB800]" />
+            <h2 className="text-lg font-semibold text-foreground mb-3 flex items-center gap-2">
+              <div className="w-5 h-5">
+                <LottieIcon name="sparkles" size={20} />
+              </div>
               Suggested Questions
             </h2>
             <div className="space-y-2">
@@ -297,7 +310,7 @@ export function AskYourBrain() {
                   transition={{ delay: 0.2 + index * 0.1 }}
                   whileHover={{ scale: 1.02, x: 4 }}
                   onClick={() => handleQuestionClick(question)}
-                  className="w-full text-left bg-[rgba(79,140,255,0.05)] border border-[rgba(79,140,255,0.2)] rounded-lg p-3 text-sm text-[#E8EEF7] hover:border-[rgba(79,140,255,0.4)] transition-all"
+                  className="w-full text-left bg-primary/5 border border-border rounded-lg p-3 text-sm text-foreground hover:border-primary/40 transition-all"
                 >
                   {question}
                 </motion.button>
@@ -309,29 +322,31 @@ export function AskYourBrain() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.2 }}
-            className="bg-gradient-to-br from-[rgba(79,140,255,0.1)] to-[rgba(122,92,255,0.1)] border border-[rgba(79,140,255,0.3)] rounded-xl p-5"
+            className="bg-gradient-to-br from-primary/10 to-accent/10 border border-primary/25 rounded-xl p-5"
           >
             <div className="flex items-start gap-3">
-              <div className="p-2 bg-[rgba(79,140,255,0.2)] rounded-lg flex-shrink-0">
-                <Brain className="w-5 h-5 text-[#4F8CFF]" />
+              <div className="p-2 bg-primary/15 rounded-lg flex-shrink-0">
+                <div className="w-5 h-5">
+                  <HelpCircle className="h-5 w-5 text-primary" />
+                </div>
               </div>
               <div>
-                <h3 className="text-white font-semibold mb-2">How it works</h3>
-                <ul className="space-y-2 text-sm text-[#8B92A8]">
+                <h3 className="text-foreground font-semibold mb-2">How it works</h3>
+                <ul className="space-y-2 text-sm text-muted-foreground">
                   <li className="flex items-start gap-2">
-                    <span className="text-[#4F8CFF] mt-0.5">•</span>
+                    <span className="text-primary mt-0.5">•</span>
                     <span>I search through your entire knowledge graph</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[#4F8CFF] mt-0.5">•</span>
+                    <span className="text-primary mt-0.5">•</span>
                     <span>I consider concept connections and relationships</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[#4F8CFF] mt-0.5">•</span>
+                    <span className="text-primary mt-0.5">•</span>
                     <span>I factor in your retention strength for each topic</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-[#4F8CFF] mt-0.5">•</span>
+                    <span className="text-primary mt-0.5">•</span>
                     <span>I provide context-aware explanations</span>
                   </li>
                 </ul>
@@ -343,21 +358,21 @@ export function AskYourBrain() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: 'spring', stiffness: 260, damping: 20, delay: 0.3 }}
-            className="bg-[#131824] border border-[rgba(79,140,255,0.2)] rounded-xl p-5"
+            className="soft-card p-5"
           >
-            <h2 className="text-lg font-semibold text-white mb-3">Quick Stats</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-3">Quick Stats</h2>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-[#8B92A8]">Knowledge Nodes</span>
-                <span className="text-lg font-bold text-white">{nodeCount}</span>
+                <span className="text-sm text-muted-foreground">Knowledge Nodes</span>
+                <span className="text-lg font-bold text-foreground">{nodeCount}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-[#8B92A8]">Connections</span>
-                <span className="text-lg font-bold text-white">{connectionCount}</span>
+                <span className="text-sm text-muted-foreground">Connections</span>
+                <span className="text-lg font-bold text-foreground">{connectionCount}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-[#8B92A8]">Avg. Strength</span>
-                <span className="text-lg font-bold text-[#4F8CFF]">{avgStrength}%</span>
+                <span className="text-sm text-muted-foreground">Avg. Strength</span>
+                <span className="text-lg font-bold text-primary">{avgStrength}%</span>
               </div>
             </div>
           </motion.div>

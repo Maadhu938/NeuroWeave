@@ -67,9 +67,16 @@ async def security_headers(request: Request, call_next):
 
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    """Catch unhandled exceptions and return a generic error — never leak stack traces."""
-    import logging
-    logging.getLogger("neuroweave").error("Unhandled error on %s: %s", request.url.path, exc, exc_info=True)
+    """Catch unhandled exceptions. Dev mode shows traceback."""
+    import logging, traceback
+    logger = logging.getLogger("neuroweave")
+    logger.error("Unhandled error on %s: %s", request.url.path, exc, exc_info=True)
+    
+    if settings.environment != "production":
+        return JSONResponse(
+            status_code=500, 
+            content={"detail": str(exc), "traceback": traceback.format_exc()}
+        )
     return JSONResponse(status_code=500, content={"detail": "Internal server error"})
 
 # Register routes

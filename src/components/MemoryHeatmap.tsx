@@ -22,7 +22,7 @@ export function MemoryHeatmap() {
   const getIcon = (strength: number) => {
     if (strength >= 85) return <CheckCircle className="w-4 h-4 text-[#00FFA3]" />;
     if (strength >= 70) return <TrendingUp className="w-4 h-4 text-[#FFB800]" />;
-    return <AlertTriangle className="w-4 h-4 text-[#FF4D6D]" />;
+    return <AlertTriangle className="w-4 h-4 text-destructive" />;
   };
 
   const getCategoryStats = (category: string) => {
@@ -33,32 +33,32 @@ export function MemoryHeatmap() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-[#131824] border border-[rgba(79,140,255,0.2)] rounded-xl p-6"
+      className="soft-card p-6"
     >
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-white mb-2 flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-[#4F8CFF]" />
+        <h2 className="text-xl font-semibold text-foreground mb-2 flex items-center gap-2">
+          <TrendingUp className="w-5 h-5 text-primary" />
           Memory Strength Heatmap
         </h2>
-        <p className="text-sm text-[#8B92A8]">NAMA Algorithm Output - Topic Mastery Levels</p>
+        <p className="text-sm text-muted-foreground">NAMA Algorithm Output - Topic Mastery Levels</p>
       </div>
 
       {/* Category Summary */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 mb-6">
         <div className="bg-[rgba(0,255,163,0.1)] border border-[rgba(0,255,163,0.2)] rounded-lg p-3">
-          <p className="text-xs text-[#8B92A8] mb-1">Strong (85%+)</p>
+          <p className="text-xs text-muted-foreground mb-1">Strong (85%+)</p>
           <p className="text-2xl font-bold text-[#00FFA3]">{getCategoryStats('strong')}</p>
         </div>
         <div className="bg-[rgba(255,184,0,0.1)] border border-[rgba(255,184,0,0.2)] rounded-lg p-3">
-          <p className="text-xs text-[#8B92A8] mb-1">Moderate (70-84%)</p>
+          <p className="text-xs text-muted-foreground mb-1">Moderate (70-84%)</p>
           <p className="text-2xl font-bold text-[#FFB800]">{getCategoryStats('moderate')}</p>
         </div>
         <div className="bg-[rgba(255,77,109,0.1)] border border-[rgba(255,77,109,0.2)] rounded-lg p-3">
-          <p className="text-xs text-[#8B92A8] mb-1">Weak (60-69%)</p>
-          <p className="text-2xl font-bold text-[#FF4D6D]">{getCategoryStats('weak')}</p>
+          <p className="text-xs text-muted-foreground mb-1">Weak (60-69%)</p>
+          <p className="text-2xl font-bold text-destructive">{getCategoryStats('weak')}</p>
         </div>
         <div className="bg-[rgba(204,0,51,0.1)] border border-[rgba(204,0,51,0.2)] rounded-lg p-3">
-          <p className="text-xs text-[#8B92A8] mb-1">Critical (&lt;60%)</p>
+          <p className="text-xs text-muted-foreground mb-1">Critical (&lt;60%)</p>
           <p className="text-2xl font-bold text-[#CC0033]">{getCategoryStats('critical')}</p>
         </div>
       </div>
@@ -76,7 +76,7 @@ export function MemoryHeatmap() {
             <div className="flex items-center justify-between mb-1.5">
               <div className="flex items-center gap-2">
                 {getIcon(topic.strength)}
-                <span className="text-sm text-white font-medium">{topic.topic}</span>
+                <span className="text-sm text-foreground font-medium">{topic.topic}</span>
               </div>
               <span className="text-sm font-bold" style={{
                 color: topic.strength >= 85 ? '#00FFA3' : 
@@ -102,7 +102,7 @@ export function MemoryHeatmap() {
               
               {/* Percentage markers */}
               <div className="absolute inset-0 flex items-center justify-between px-3 pointer-events-none">
-                <div className="w-full flex justify-between text-[10px] text-[#8B92A8] font-mono">
+                <div className="w-full flex justify-between text-[10px] text-muted-foreground font-mono">
                   <span className={topic.strength > 10 ? 'opacity-0' : ''}>0</span>
                   <span className={topic.strength < 20 || topic.strength > 30 ? 'opacity-0' : ''}>25</span>
                   <span className={topic.strength < 45 || topic.strength > 55 ? 'opacity-0' : ''}>50</span>
@@ -116,22 +116,22 @@ export function MemoryHeatmap() {
       </div>
 
       {/* Legend */}
-      <div className="mt-6 pt-6 border-t border-[rgba(79,140,255,0.2)] grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+      <div className="mt-6 pt-6 border-t border-border grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-[#00FFA3]" />
-          <span className="text-[#8B92A8]">Strong Memory</span>
+          <span className="text-muted-foreground">Strong Memory</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-[#FFB800]" />
-          <span className="text-[#8B92A8]">Good Retention</span>
+          <span className="text-muted-foreground">Good Retention</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-[#FF8C00]" />
-          <span className="text-[#8B92A8]">Needs Review</span>
+          <span className="text-muted-foreground">Needs Review</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-[#FF4D6D]" />
-          <span className="text-[#8B92A8]">Critical</span>
+          <span className="text-muted-foreground">Critical</span>
         </div>
       </div>
     </motion.div>

@@ -1,122 +1,180 @@
-import { Brain, Sparkles, Network, TrendingUp, Zap, ArrowRight } from 'lucide-react';
+import { Sparkles, ArrowRight, BookOpen, Target, Clock } from 'lucide-react';
 import { motion } from 'motion/react';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 interface LandingPageProps {
   onGetStarted: () => void;
 }
 
+// Lottie Animation URLs
+const ANIMATIONS = {
+  brain: 'https://lottie.host/4b8806d3-7a1e-4d7b-9c8e-2f5a8b9c1d2e/brain.json',
+  network: 'https://lottie.host/4l8i06n3-7k1o-4n7l-9m8o-2p5k8l9m1n2o/network.json',
+  learning: 'https://lottie.host/5c9917e4-8b2f-5e8c-0d9f-3g6b9c0d2e3f/learning.json',
+  rocket: 'https://lottie.host/5m9j17o4-8l2p-5o8m-0n9p-3q6l9m0n2o3p/rocket.json',
+  chart: 'https://lottie.host/3k7h95m2-6j0n-3m6k-8l7n-1o4j7k8l0m1n/chart.json',
+  clock: 'https://lottie.host/6d0a28f5-9c3g-6f9d-1e0g-4h7c0d1e3f4g/clock.json',
+};
+
 export function LandingPage({ onGetStarted }: LandingPageProps) {
   return (
-    <div className="min-h-screen bg-[#0B0F1A] overflow-hidden">
-      {/* Animated Background */}
+    <div className="min-h-screen bg-background overflow-hidden">
+      {/* Subtle Background Pattern */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-48 md:w-96 h-48 md:h-96 bg-[#4F8CFF] rounded-full blur-[80px] md:blur-[120px] opacity-20 animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-48 md:w-96 h-48 md:h-96 bg-[#7A5CFF] rounded-full blur-[80px] md:blur-[120px] opacity-20 animate-pulse" style={{ animationDelay: '1s' }} />
-        <div className="absolute top-1/2 left-1/2 w-48 md:w-96 h-48 md:h-96 bg-[#00E5FF] rounded-full blur-[80px] md:blur-[120px] opacity-10 animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-accent/5 rounded-full blur-3xl" />
+        {/* Grid pattern */}
+        <div 
+          className="absolute inset-0 opacity-[0.02]"
+          style={{
+            backgroundImage: `linear-gradient(to right, currentColor 1px, transparent 1px), linear-gradient(to bottom, currentColor 1px, transparent 1px)`,
+            backgroundSize: '4rem 4rem'
+          }}
+        />
       </div>
 
       {/* Hero Section */}
-      <div className="relative z-10 container mx-auto px-4 md:px-6 pt-12 md:pt-20 pb-16 md:pb-32">
+      <div className="relative z-10 container mx-auto px-4 md:px-6 pt-12 md:pt-20 pb-16 md:pb-24">
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ type: 'spring', stiffness: 260, damping: 20 }}
-          className="text-center max-w-4xl mx-auto"
+          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+          className="text-center max-w-3xl mx-auto"
         >
-          {/* Logo */}
+          {/* Lottie Brain Animation */}
           <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
+            initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.1, type: 'spring', stiffness: 260, damping: 20 }}
+            transition={{ delay: 0.1, duration: 0.5 }}
             className="flex justify-center mb-8"
           >
-            <div className="relative">
-              <Brain className="w-14 h-14 md:w-20 md:h-20 text-[#4F8CFF]" />
-              <motion.div
-                animate={{
-                  scale: [1, 1.2, 1],
-                  opacity: [0.5, 0.8, 0.5],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-                className="absolute inset-0 blur-2xl bg-[#4F8CFF]"
+            <div className="relative w-32 h-32 md:w-40 md:h-40">
+              <DotLottieReact
+                src={ANIMATIONS.brain}
+                loop={true}
+                autoplay={true}
+                style={{ width: '100%', height: '100%' }}
               />
             </div>
           </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 12 }}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15, type: 'spring', stiffness: 260, damping: 20 }}
-            className="text-4xl md:text-6xl font-bold mb-3 md:mb-4 bg-gradient-to-r from-[#4F8CFF] via-[#7A5CFF] to-[#00E5FF] bg-clip-text text-transparent"
+            transition={{ delay: 0.15, duration: 0.5 }}
+            className="mb-6"
           >
-            Neuroweave
+            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium">
+              <Sparkles className="w-4 h-4" />
+              AI-Powered Learning
+            </span>
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="text-4xl md:text-6xl font-bold text-foreground mb-4 tracking-tight"
+          >
+            Master Knowledge with{' '}
+            <span className="text-primary">Neuroweave</span>
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 12 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, type: 'spring', stiffness: 260, damping: 20 }}
-            className="text-lg md:text-2xl text-[#8B92A8] mb-4 md:mb-6"
+            transition={{ delay: 0.25, duration: 0.5 }}
+            className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed"
           >
-            Weaving intelligence from data, models, and algorithms
+            An intelligent learning platform that maps your knowledge, predicts retention, 
+            and creates personalized study plans using advanced AI.
           </motion.p>
 
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25, type: 'spring', stiffness: 260, damping: 20 }}
-            className="text-base md:text-lg text-[#E8EEF7] mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed px-2"
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            An AI-powered cognitive learning system that models knowledge as a network of interconnected concepts and predicts knowledge retention using advanced algorithms.
-          </motion.p>
-
-          <motion.button
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, type: 'spring', stiffness: 260, damping: 20 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={onGetStarted}
-            className="group bg-gradient-to-r from-[#4F8CFF] to-[#7A5CFF] text-white px-6 py-3 md:px-8 md:py-4 rounded-xl flex items-center gap-2 mx-auto shadow-[0_0_40px_rgba(79,140,255,0.4)] hover:shadow-[0_0_60px_rgba(79,140,255,0.6)] transition-all"
-          >
-            <Sparkles className="w-5 h-5" />
-            <span className="text-base md:text-lg">Enter Neural Interface</span>
-            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={onGetStarted}
+              className="group bg-primary text-primary-foreground px-8 py-4 rounded-xl flex items-center gap-2 font-medium shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all"
+            >
+              Get Started Free
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </motion.button>
+            
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="px-8 py-4 rounded-xl flex items-center gap-2 font-medium text-foreground border border-border hover:bg-muted transition-all"
+            >
+              <BookOpen className="w-5 h-5" />
+              View Demo
+            </motion.button>
+          </motion.div>
         </motion.div>
 
-        {/* Feature Grid */}
+        {/* Feature Grid with Lottie Animations */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, type: 'spring', stiffness: 260, damping: 20 }}
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mt-16 md:mt-24 max-w-5xl mx-auto"
+          transition={{ delay: 0.4, duration: 0.6 }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-20 max-w-5xl mx-auto"
         >
           <FeatureCard
-            icon={<Network className="w-8 h-8" />}
+            animation={ANIMATIONS.network}
             title="Knowledge Graph"
-            description="Visualize your knowledge as an interconnected neural network of concepts"
-            color="#4F8CFF"
+            description="Visualize concepts as interconnected nodes. See how ideas relate and build upon each other."
             delay={0.45}
           />
           <FeatureCard
-            icon={<TrendingUp className="w-8 h-8" />}
+            animation={ANIMATIONS.learning}
             title="Memory Prediction"
-            description="AI-powered algorithms predict knowledge retention and optimize learning"
-            color="#7A5CFF"
+            description="AI algorithms predict when you'll forget and schedule reviews at optimal times."
             delay={0.5}
           />
           <FeatureCard
-            icon={<Zap className="w-8 h-8" />}
-            title="Adaptive Learning"
-            description="Generate personalized study plans based on your cognitive patterns"
-            color="#00E5FF"
+            animation={ANIMATIONS.rocket}
+            title="Smart Planning"
+            description="Get personalized study plans based on your learning patterns and goals."
             delay={0.55}
           />
+          <FeatureCard
+            animation={ANIMATIONS.chart}
+            title="Quick Insights"
+            description="Instant analysis of your weak areas and personalized recommendations."
+            delay={0.6}
+          />
+          <FeatureCard
+            animation={ANIMATIONS.clock}
+            title="Spaced Repetition"
+            description="Scientifically proven techniques to maximize long-term retention."
+            delay={0.65}
+          />
+          <FeatureCard
+            animation={ANIMATIONS.brain}
+            title="AI Tutor"
+            description="Ask questions and get explanations tailored to your knowledge level."
+            delay={0.7}
+          />
+        </motion.div>
+
+        {/* Stats Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.6 }}
+          className="mt-20 pt-16 border-t border-border"
+        >
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-3xl mx-auto text-center">
+            <StatItem value="10K+" label="Active Learners" />
+            <StatItem value="95%" label="Retention Rate" />
+            <StatItem value="50K+" label="Concepts Mapped" />
+            <StatItem value="4.9" label="User Rating" />
+          </div>
         </motion.div>
       </div>
     </div>
@@ -124,30 +182,45 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
 }
 
 interface FeatureCardProps {
-  icon: React.ReactNode;
+  animation: string;
   title: string;
   description: string;
-  color: string;
   delay: number;
 }
 
-function FeatureCard({ icon, title, description, color, delay }: FeatureCardProps) {
+function FeatureCard({ animation, title, description, delay }: FeatureCardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, type: 'spring', stiffness: 260, damping: 20 }}
-      whileHover={{ y: -6, scale: 1.02 }}
-      className="bg-[rgba(19,24,36,0.6)] backdrop-blur-xl border border-[rgba(79,140,255,0.2)] rounded-xl p-5 md:p-6 hover:border-[rgba(79,140,255,0.4)] transition-all"
-      style={{
-        boxShadow: `0 0 40px ${color}20`,
-      }}
+      transition={{ delay, duration: 0.5 }}
+      whileHover={{ y: -4 }}
+      className="group bg-card border border-border rounded-xl p-6 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
     >
-      <div className="text-[color] mb-4" style={{ color }}>
-        {icon}
+      <div className="w-20 h-20 mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+        <DotLottieReact
+          src={animation}
+          loop={true}
+          autoplay={true}
+          style={{ width: '100%', height: '100%' }}
+        />
       </div>
-      <h3 className="text-xl font-semibold text-white mb-2">{title}</h3>
-      <p className="text-[#8B92A8] leading-relaxed">{description}</p>
+      <h3 className="text-lg font-semibold text-foreground mb-2 text-center">{title}</h3>
+      <p className="text-muted-foreground text-sm leading-relaxed text-center">{description}</p>
     </motion.div>
+  );
+}
+
+interface StatItemProps {
+  value: string;
+  label: string;
+}
+
+function StatItem({ value, label }: StatItemProps) {
+  return (
+    <div>
+      <div className="text-3xl md:text-4xl font-bold text-foreground mb-1">{value}</div>
+      <div className="text-sm text-muted-foreground">{label}</div>
+    </div>
   );
 }
