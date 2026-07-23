@@ -28,12 +28,7 @@ logger = logging.getLogger("neuroweave.llm")
 
 
 PROVIDER_LIMITS: Dict[str, int] = {
-    "llama-3.1-8b-instant": 6_000,
-    "llama-3.1-70b-versatile": 6_000,
-    "llama-3.3-70b-versatile": 6_000,
-    "llama-3.3-70b-specdec": 6_000,
-    "gemma2-9b-it": 6_000,
-    "mixtral-8x7b-32768": 4_000,
+    "openai/gpt-oss-120b": 100_000,
     "gpt-4o": 100_000,
     "gpt-4o-mini": 100_000,
     "gpt-4-turbo": 80_000,
@@ -175,7 +170,7 @@ async def ask_brain_llm(question: str, context_chunks: List[str], related_concep
     if not settings.groq_api_key:
         return "Groq API key not configured. Please add GROQ_API_KEY to your .env file."
 
-    model = "llama-3.1-8b-instant"
+    model = "openai/gpt-oss-120b"
     limit = _get_context_limit(model)
     safety_margin = int(limit * 0.25)
     max_input = limit - safety_margin
@@ -244,7 +239,7 @@ async def generate_insights_llm(node_summaries: str) -> List[dict]:
         if now - ts < INSIGHT_CACHE_TTL:
             return data
 
-    model = "llama-3.3-70b-versatile"
+    model = "openai/gpt-oss-120b"
 
     limited_summaries = node_summaries[:2000]
 
@@ -288,7 +283,7 @@ async def generate_quiz_llm(concept: str, content: str, count: int = 5) -> List[
     if not settings.groq_api_key:
         return [_fallback_question(concept)]
 
-    model = "llama-3.3-70b-versatile"
+    model = "openai/gpt-oss-120b"
     limit = _get_context_limit(model)
     safety_margin = int(limit * 0.30)
     max_input = limit - safety_margin
