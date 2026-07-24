@@ -4,7 +4,7 @@ import { AreaChart, Area, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRad
 import { MemoryHeatmap } from '@/components/MemoryHeatmap';
 import { MemoryDecayChart } from '@/components/MemoryDecayChart';
 import { AIInsightCards } from '@/components/AIInsightCards';
-import { getDashboard, type DashboardData, type RetentionDataPoint, type KnowledgeStrengthItem, type WeakArea, type UpcomingReview } from '@/lib/api';
+import { getDashboard, getAIInsights, type DashboardData, type RetentionDataPoint, type KnowledgeStrengthItem, type WeakArea, type UpcomingReview, type AIInsight } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
 import { LottieIcon } from '@/components/AnimatedIcons';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -22,25 +22,29 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const [upcomingReviews, setUpcomingReviews] = useState<UpcomingReview[]>([]);
   const [metrics, setMetrics] = useState({ knowledgeScore: '--', retentionRate: '--', conceptsMastered: '--', studyStreak: '--' });
   const [aiInsight, setAiInsight] = useState('');
+  const [insightCards, setInsightCards] = useState<AIInsight[]>([]);
   const [showHeavyComponents, setShowHeavyComponents] = useState({ ai: false, heatmap: false, decay: false });
   const [loading, setLoading] = useState(true);
 
   const fetchDashboard = useCallback(() => {
     setLoading(true);
-    getDashboard()
-      .then((data: DashboardData) => {
-        setRetentionData(data.retentionData);
-        setKnowledgeStrength(data.knowledgeStrength);
-        setWeakAreas(data.weakAreas);
-        setUpcomingReviews(data.upcomingReviews);
-        setMetrics({
-          knowledgeScore: `${data.metrics.knowledgeScore}%`,
-          retentionRate: `${data.metrics.retentionRate}%`,
-          conceptsMastered: `${data.metrics.conceptsMastered}`,
-          studyStreak: `${data.metrics.studyStreakDays} days`,
-        });
-        setAiInsight(data.aiInsight);
-      })
+    Promise.all([
+      getDashboard(),
+      getAIInsights().catch(() => [] as AIInsight[]),
+    ]).then(([dashboardData, cards]) => {
+      setRetentionData(dashboardData.retentionData);
+      setKnowledgeStrength(dashboardData.knowledgeStrength);
+      setWeakAreas(dashboardData.weakAreas);
+      setUpcomingReviews(dashboardData.upcomingReviews);
+      setMetrics({
+        knowledgeScore: `${dashboardData.metrics.knowledgeScore}%`,
+        retentionRate: `${dashboardData.metrics.retentionRate}%`,
+        conceptsMastered: `${dashboardData.metrics.conceptsMastered}`,
+        studyStreak: `${dashboardData.metrics.studyStreakDays} days`,
+      });
+      setAiInsight(dashboardData.aiInsight);
+      setInsightCards(cards);
+    })
       .catch(() => { /* API not available yet */ })
       .finally(() => setLoading(false));
   }, []);
@@ -392,7 +396,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             </div>
             Personalized Recommendations
           </h2>
-          <AIInsightCards />
+          <AIInsightCards insights={insightCards} />
         </motion.div>
       )}
 

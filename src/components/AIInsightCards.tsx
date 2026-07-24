@@ -1,28 +1,46 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'motion/react';
 import { AlertCircle, TrendingUp, Lightbulb, Target } from 'lucide-react';
-import { getAIInsights, type AIInsight } from '@/lib/api';
+import { type AIInsight } from '@/lib/api';
 
 interface InsightDisplay extends AIInsight {
   icon: React.ReactNode;
 }
 
-export function AIInsightCards() {
+interface AIInsightCardsProps {
+  insights?: AIInsight[];
+}
+
+const iconMap: Record<string, React.ReactNode> = {
+  warning: <AlertCircle className="w-5 h-5" />,
+  success: <TrendingUp className="w-5 h-5" />,
+  suggestion: <Lightbulb className="w-5 h-5" />,
+  info: <Target className="w-5 h-5" />,
+};
+
+export function AIInsightCards({ insights: propInsights }: AIInsightCardsProps = {}) {
   const [insights, setInsights] = useState<InsightDisplay[]>([]);
 
   useEffect(() => {
-    getAIInsights()
-      .then((data) => {
-        const iconMap: Record<string, React.ReactNode> = {
-          warning: <AlertCircle className="w-5 h-5" />,
-          success: <TrendingUp className="w-5 h-5" />,
-          suggestion: <Lightbulb className="w-5 h-5" />,
-          info: <Target className="w-5 h-5" />,
-        };
+    if (propInsights) {
+      setInsights(propInsights.map((item) => ({ ...item, icon: iconMap[item.type] ?? iconMap.info })));
+      return;
+    }
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const { getAIInsights } = await import('@/lib/api');
+        const data = await getAIInsights();
+        if (cancelled) return;
         setInsights(data.map((item) => ({ ...item, icon: iconMap[item.type] ?? iconMap.info })));
-      })
-      .catch(() => { /* API not available yet */ });
-  }, []);
+      } catch {
+        // ignore
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [propInsights]);
 
   const getCardStyle = (type: string) => {
     switch (type) {

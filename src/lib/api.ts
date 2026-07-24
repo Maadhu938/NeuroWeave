@@ -1,6 +1,7 @@
 import { auth } from '@/lib/firebase';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.neuroweave.in';
+const REQUEST_TIMEOUT = 15_000;
 
 const promiseCache = new Map<string, Promise<any>>();
 
@@ -8,7 +9,6 @@ async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
   const isReadRequest = !options || !options.method || options.method === 'GET';
   const cacheKey = `${endpoint}:${options?.method || 'GET'}:${JSON.stringify(options?.body || '')}`;
 
-  // Deduplicate inflight GET requests
   if (isReadRequest && promiseCache.has(cacheKey)) {
     return promiseCache.get(cacheKey);
   }
@@ -20,32 +20,39 @@ async function request<T>(endpoint: string, options?: RequestInit): Promise<T> {
       const { headers: optHeaders, ...restOptions } = options || {};
       const isFormData = restOptions.body instanceof FormData;
 
-      const response = await fetch(url, {
-        ...restOptions,
-        headers: {
-          ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          ...(optHeaders as Record<string, string> || {}),
-        },
-      });
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
 
-      if (!response.ok) {
-        let message = `API error: ${response.status} ${response.statusText}`;
-        try {
-          const data = await response.json();
-          const detail = (data as any)?.detail || (data as any)?.message;
-          if (typeof detail === 'string' && detail.trim().length > 0) {
-            message = detail;
+      try {
+        const response = await fetch(url, {
+          ...restOptions,
+          signal: controller.signal,
+          headers: {
+            ...(isFormData ? {} : { 'Content-Type': 'application/json' }),
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            ...(optHeaders as Record<string, string> || {}),
+          },
+        });
+
+        if (!response.ok) {
+          let message = `API error: ${response.status} ${response.statusText}`;
+          try {
+            const data = await response.json();
+            const detail = (data as any)?.detail || (data as any)?.message;
+            if (typeof detail === 'string' && detail.trim().length > 0) {
+              message = detail;
+            }
+          } catch {
+            // Ignore JSON parse failures and fall back to generic message
           }
-        } catch {
-          // Ignore JSON parse failures and fall back to generic message
+          throw new Error(message);
         }
-        throw new Error(message);
-      }
 
-      return await response.json();
+        return await response.json();
+      } finally {
+        clearTimeout(timeoutId);
+      }
     } finally {
-      // Clear from cache once finished (whether success or error)
       if (isReadRequest) promiseCache.delete(cacheKey);
     }
   })();
