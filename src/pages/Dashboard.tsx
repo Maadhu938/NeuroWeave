@@ -7,6 +7,7 @@ import { AIInsightCards } from '@/components/AIInsightCards';
 import { getDashboard, type DashboardData, type RetentionDataPoint, type KnowledgeStrengthItem, type WeakArea, type UpcomingReview } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
 import { LottieIcon } from '@/components/AnimatedIcons';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface DashboardProps {
   onNavigate?: (page: string) => void;
@@ -22,8 +23,10 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const [metrics, setMetrics] = useState({ knowledgeScore: '--', retentionRate: '--', conceptsMastered: '--', studyStreak: '--' });
   const [aiInsight, setAiInsight] = useState('');
   const [showHeavyComponents, setShowHeavyComponents] = useState({ ai: false, heatmap: false, decay: false });
+  const [loading, setLoading] = useState(true);
 
   const fetchDashboard = useCallback(() => {
+    setLoading(true);
     getDashboard()
       .then((data: DashboardData) => {
         setRetentionData(data.retentionData);
@@ -38,7 +41,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         });
         setAiInsight(data.aiInsight);
       })
-      .catch(() => { /* API not available yet */ });
+      .catch(() => { /* API not available yet */ })
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -89,6 +93,27 @@ export function Dashboard({ onNavigate }: DashboardProps) {
           <span className="text-sm">AI Insights</span>
         </motion.button>
       </div>
+
+      {loading ? (
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-28 rounded-xl" />
+            ))}
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Skeleton className="h-80 rounded-xl" />
+            <Skeleton className="h-80 rounded-xl" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <Skeleton className="h-64 rounded-xl" />
+            <Skeleton className="h-64 rounded-xl" />
+          </div>
+          <Skeleton className="h-40 rounded-xl" />
+          <Skeleton className="h-48 rounded-xl" />
+        </div>
+      ) : (
+        <>
 
       {/* Top Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -377,6 +402,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       {/* Memory Decay Prediction */}
       {showHeavyComponents.decay && (
         <MemoryDecayChart concept={weakAreas.length > 0 ? weakAreas[0].topic : undefined} />
+      )}
+        </>
       )}
     </div>
   );
