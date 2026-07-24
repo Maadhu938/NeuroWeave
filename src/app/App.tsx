@@ -124,7 +124,7 @@ export default function App() {
       case 'ask':
         return <AskYourBrain />;
       case 'settings':
-        return <Settings />;
+        return <Settings onNavigate={setCurrentPage} />;
       case 'privacy':
         return <PrivacyPolicy />;
       case '404':

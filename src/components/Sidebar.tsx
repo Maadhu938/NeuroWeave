@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '@/hooks/useAuth';
 import { LottieIcon } from './AnimatedIcons';
-import { BarChart3, BookOpenCheck, CalendarDays, LayoutDashboard, LogOut, MessageCircleQuestion, Network, Settings, UploadCloud, X, Shield } from 'lucide-react';
+import { BarChart3, BookOpenCheck, CalendarDays, LayoutDashboard, LogOut, MessageCircleQuestion, Network, Settings, UploadCloud, X } from 'lucide-react';
 
 interface SidebarProps {
   currentPage: string;
@@ -18,10 +18,6 @@ const navItems = [
   { id: 'planner', icon: CalendarDays, label: 'Study Planner' },
   { id: 'ask', icon: MessageCircleQuestion, label: 'Ask Your Brain' },
   { id: 'settings', icon: Settings, label: 'Settings' },
-];
-
-const bottomNavItems = [
-  { id: 'privacy', icon: Shield, label: 'Privacy Policy' },
 ];
 
 export function Sidebar({ currentPage, onNavigate, open, onClose }: SidebarProps) {
@@ -103,28 +99,6 @@ export function Sidebar({ currentPage, onNavigate, open, onClose }: SidebarProps
             </div>
           </div>
         )}
-        {bottomNavItems.map((item) => {
-          const isActive = currentPage === item.id;
-          const Icon = item.icon;
-          return (
-            <motion.button
-              key={item.id}
-              onClick={() => handleNav(item.id)}
-              whileHover={{ x: 2 }}
-              whileTap={{ scale: 0.98 }}
-              className={`
-                w-full flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200
-                ${isActive 
-                  ? 'bg-primary/10 text-primary' 
-                  : 'text-muted-foreground hover:bg-muted/75 hover:text-foreground'
-                }
-              `}
-            >
-              <Icon className="h-[18px] w-[18px]" />
-              <span className="text-sm">{item.label}</span>
-            </motion.button>
-          );
-        })}
         <motion.button
           whileHover={{ x: 2 }}
           whileTap={{ scale: 0.98 }}

@@ -4,6 +4,7 @@ import { LottieIcon } from '@/components/AnimatedIcons';
 import { RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { MemoryDecayChart } from '@/components/MemoryDecayChart';
 import { getInsights, getDashboard, type InsightsData, type SubjectRetention } from '@/lib/api';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export function Insights() {
   const [knowledgeCoverage, setKnowledgeCoverage] = useState<{ subject: string; score: number }[]>([]);
@@ -11,8 +12,10 @@ export function Insights() {
   const [subjectRetention, setSubjectRetention] = useState<SubjectRetention[]>([]);
   const [insights, setInsights] = useState<{ icon: React.ReactNode; title: string; description: string; type: string; color: string }[]>([]);
   const [weakConcept, setWeakConcept] = useState<string | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     getInsights()
       .then((data: InsightsData) => {
         setKnowledgeCoverage(data.knowledgeCoverage);
@@ -31,12 +34,13 @@ export function Insights() {
           }),
         );
       })
-      .catch(() => { /* API not available yet */ });
+      .catch(() => { /* API not available yet */ })
+      .finally(() => setLoading(false));
 
-    // Memory decay needs a concept label (not a subject/category). Reuse dashboard weakAreas.
     getDashboard()
       .then((d) => setWeakConcept(d.weakAreas?.[0]?.topic))
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => {});
   }, []);
 
   return (
@@ -46,6 +50,23 @@ export function Insights() {
         <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">AI-Powered Insights</h1>
         <p className="text-sm text-muted-foreground">Deep analysis of your learning patterns and knowledge retention</p>
       </div>
+
+      {loading ? (
+        <div className="space-y-4 md:space-y-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-32 rounded-xl" />
+            ))}
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+            <Skeleton className="h-80 rounded-xl" />
+            <Skeleton className="h-80 rounded-xl" />
+          </div>
+          <Skeleton className="h-48 rounded-xl" />
+          <Skeleton className="h-64 rounded-xl" />
+        </div>
+      ) : (
+        <>
 
       {/* Insight Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
@@ -249,6 +270,8 @@ export function Insights() {
 
       {/* Memory Decay Analysis */}
       <MemoryDecayChart concept={weakConcept} />
+        </>
+      )}
     </div>
   );
 }

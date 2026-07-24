@@ -3,6 +3,7 @@ import { motion } from 'motion/react';
 import { LottieIcon } from '@/components/AnimatedIcons';
 import { getStudyPlan, type StudyRecommendation, type WeekDay, type Milestone } from '@/lib/api';
 import { ReviewQuiz } from '@/components/ReviewQuiz';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface StudyPlannerProps {
   onNavigate?: (page: string) => void;
@@ -67,6 +68,24 @@ export function StudyPlanner({ onNavigate }: StudyPlannerProps) {
           <span className="text-white text-sm md:text-base">{loading ? 'Refreshing...' : 'Generate New Plan'}</span>
         </motion.div>
       </div>
+
+      {loading ? (
+        <div className="space-y-4 md:space-y-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <Skeleton key={i} className="h-24 rounded-xl" />
+            ))}
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+            <div className="lg:col-span-2 space-y-4 md:space-y-6">
+              <Skeleton className="h-64 rounded-xl" />
+              <Skeleton className="h-80 rounded-xl" />
+            </div>
+            <Skeleton className="h-96 rounded-xl" />
+          </div>
+        </div>
+      ) : (
+        <>
 
       {/* Stats Overview */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
@@ -340,6 +359,8 @@ export function StudyPlanner({ onNavigate }: StudyPlannerProps) {
             fetchPlan();
           }}
         />
+      )}
+        </>
       )}
     </div>
   );

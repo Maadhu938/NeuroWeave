@@ -52,7 +52,7 @@ function applyTheme(theme: Theme) {
   }
 }
 
-export function Settings() {
+export function Settings({ onNavigate }: { onNavigate?: (page: string) => void } = {}) {
   const { user } = useAuth();
   const [displayName, setDisplayName] = useState(user?.displayName || '');
   const [prefs, setPrefs] = useState<UserPreferences>(loadPrefs);
@@ -392,6 +392,25 @@ export function Settings() {
                     </div>
                     <div className="w-5 h-5">
                       <LottieIcon name="alert" size={20} />
+                    </div>
+                  </div>
+                </motion.button>
+              )}
+
+              {onNavigate && (
+                <motion.button
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  onClick={() => onNavigate('privacy')}
+                  className="w-full bg-muted border border-border rounded-lg p-4 text-left hover:border-primary/50 transition-all"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-foreground font-medium">Privacy Policy</p>
+                      <p className="text-sm text-muted-foreground">View our privacy policy and cookie settings</p>
+                    </div>
+                    <div className="w-5 h-5">
+                      <LottieIcon name="shield" size={20} />
                     </div>
                   </div>
                 </motion.button>

@@ -75,21 +75,26 @@ async def get_study_plan_data(db: AsyncSession, user_id: str) -> Dict:
         })
 
     # ── Week schedule ───────────────────────────────────────
-    total_recs = len(recommendations)
     days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
     week_schedule = []
-    for i, day in enumerate(days):
-        planned = max(1, total_recs // 7 + (1 if i < total_recs % 7 else 0))
-        done = reviews_by_day.get(i, 0)
-        # Estimate time: weaker concepts need more time
-        avg_strength = sum(n.strength or 0 for n in sorted_nodes[:planned]) / max(planned, 1)
-        est_minutes = planned * (15 if avg_strength < 0.3 else 10 if avg_strength < 0.6 else 5)
-        week_schedule.append({
-            "day": day,
-            "sessions": planned,
-            "completed": min(done, planned),
-            "total": est_minutes,
-        })
+    if not week_logs:
+        week_schedule = [
+            {"day": d, "sessions": 0, "completed": 0, "total": 0}
+            for d in days
+        ]
+    else:
+        total_recs = len(recommendations)
+        for i, day in enumerate(days):
+            planned = max(1, total_recs // 7 + (1 if i < total_recs % 7 else 0))
+            done = reviews_by_day.get(i, 0)
+            avg_strength = sum(n.strength or 0 for n in sorted_nodes[:planned]) / max(planned, 1)
+            est_minutes = planned * (15 if avg_strength < 0.3 else 10 if avg_strength < 0.6 else 5)
+            week_schedule.append({
+                "day": day,
+                "sessions": planned,
+                "completed": min(done, planned),
+                "total": est_minutes,
+            })
 
     # ── Milestones (based on real review activity) ──────────
     milestones = []

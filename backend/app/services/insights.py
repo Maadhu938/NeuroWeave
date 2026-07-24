@@ -25,8 +25,8 @@ async def get_dashboard_data(db: AsyncSession, user_id: str) -> Dict:
     total_reviews = sum(n.review_count for n in nodes)
     streak = await _compute_streak(db, user_id)
 
-    # Retention data (last 7 synthetic points based on avg strength)
-    retention_data = _build_retention_curve(avg_strength)
+    # Retention data from actual review logs only — no synthetic fallback
+    retention_data = await _retention_from_logs(db, user_id)
 
     # Knowledge strength by category (re-infer stale "general" categories)
     from app.services.ingestion import _infer_category
@@ -191,27 +191,6 @@ async def get_ai_insight_cards(db: AsyncSession, user_id: str) -> List[Dict]:
     return await generate_insights_llm(node_summary)
 
 
-def _empty_dashboard() -> Dict:
-    return {
-        "metrics": {"knowledgeScore": 0, "retentionRate": 0, "conceptsMastered": 0, "studyStreakDays": 0},
-        "retentionData": _build_retention_curve(0),
-        "knowledgeStrength": [],
-        "weakAreas": [],
-        "upcomingReviews": [],
-        "aiInsight": "Upload your first document to get started with Neuroweave!",
-    }
-
-
-def _build_retention_curve(avg_strength: float) -> List[Dict]:
-    """Generate a 7-day retention curve."""
-    import math
-    base = avg_strength * 100
-    return [
-        {"date": f"Day {i + 1}", "retention": round(max(0, base - 5 * math.log(i + 1)))}
-        for i in range(7)
-    ]
-
-
 def _priority(strength: float | None) -> str:
     s = strength or 0.0
     if s < 0.25:
@@ -309,3 +288,42 @@ async def _compute_streak(db: AsyncSession, user_id: str) -> int:
         else:
             break
     return streak
+
+
+async def _retention_from_logs(db: AsyncSession, user_id: str) -> List[Dict]:
+    """Return retention data points from actual review logs only."""
+    result = await db.execute(
+        select(
+            func.date(ReviewLog.reviewed_at).label("d"),
+            func.avg(KnowledgeNode.strength).label("avg_strength"),
+        )
+        .join(KnowledgeNode, ReviewLog.node_id == KnowledgeNode.id)
+        .where(ReviewLog.user_id == user_id)
+        .group_by(func.date(ReviewLog.reviewed_at))
+        .order_by(func.date(ReviewLog.reviewed_at).desc())
+        .limit(7)
+    )
+    rows = result.all()
+    if not rows:
+        return []
+
+    data = []
+    for row in rows:
+        review_date = row[0]
+        avg_strength = float(row[1] or 0.0)
+        data.append({
+            "date": review_date.strftime("%a") if hasattr(review_date, "strftime") else str(review_date),
+            "retention": round(avg_strength * 100),
+        })
+    return data[::-1]
+
+
+def _empty_dashboard() -> Dict:
+    return {
+        "metrics": {"knowledgeScore": 0, "retentionRate": 0, "conceptsMastered": 0, "studyStreakDays": 0},
+        "retentionData": [],
+        "knowledgeStrength": [],
+        "weakAreas": [],
+        "upcomingReviews": [],
+        "aiInsight": "Upload your first document to get started with Neuroweave!",
+    }
